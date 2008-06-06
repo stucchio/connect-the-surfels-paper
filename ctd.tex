@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,enumerate,bbm,calc,capt-of,ifthen}
+\usepackage{graphicx}% Include figure files
+\usepackage{epsfig}
+
+\newtheorem{cntr}{do not use}
+\newcommand{\tmop}[1]{\operatorname{#1}}
+\newtheorem{definition}[cntr]{Definition}
+\newtheorem{assumption}{Assumption}
+\newcommand{\dueto}[1]{\textup{\textbf{(#1) }}}
+\newtheorem{varremark}[cntr]{Remark}
+\newenvironment{remark}{\begin{varremark}\em}{\em\end{varremark}}
+\newcommand{\nin}{\not\in}
+\newcommand{\tmem}[1]{{\em #1\/}}
+\newtheorem{varnote}{Note}
+\newenvironment{note}{\begin{varnote}\em}{\em\end{varnote}}
+\newtheorem{proposition}[cntr]{Proposition}
+
+\newenvironment{proof}{
+  \noindent\textbf{Proof.}\ }{\hspace*{\fill}
+  \begin{math}\Box\end{math}\medskip}
+
+\newenvironment{proofof}[1]{
+  \noindent\textbf{Proof of #1.}\ }{\hspace*{\fill}
+  \begin{math}\Box\end{math}\medskip}
+
+\newenvironment{proof*}[1]{
+  \noindent\textbf{#1\ }}{\hspace*{\fill}
+  \begin{math}\Box\end{math}\medskip}
+
+\newtheorem{lemma}[cntr]{Lemma}
+\newtheorem{corollary}[cntr]{Corollary}
+\newtheorem{theorem}[cntr]{Theorem}
+\newenvironment{enumeratenumeric}{\begin{enumerate}[1.]}{\end{enumerate}}
+\newtheorem{algo}{Algorithm}
+
+\numberwithin{cntr}{section}
+
+\newcommand{\comment}[1]{}
+
+%Handy macros
+
+\newcommand{\oneto}[1]{{1 \ldots #1}}
+\newcommand{\onetoN}[0]{{1 \ldots N}}
+\newcommand{\Oto}[1]{{0 \ldots #1-1}}
+\newcommand{\OtoN}{{0 \ldots N-1}}
+
+\newcommand{\pointData}{{ \{ p_{i} \}_{i=\OtoN} }}
+\newcommand{\tanData}{{ \{ m_{i} \}_{i=\OtoN} }}
+
+\newcommand{\curveSet}{{ \{ \gamma_i(t) \}_{\Oto{M}}}}
+
+\newcommand{\kmax}{{k_{max}}}
+
+\begin{document}
+
+\title{Reconstructing Curves from Points and Tangents}
+
+\author{L. Greengard and C. Stucchio}
+
+\maketitle
+
+\section{Introduction}
+
+In this work, we consider the problem of reconstructing a $C^{1}$ family of curves $\curveSet$ from data consisting of an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$. Note that the tangents have no particular orientation; we identify $m_{i}$ with $-m_{i}$.
+
+Our goal in this work is to construct an algorithm which reconstructs the curve from this data. Similar topics have been the subject of considerable attention, in particular there is much work\cite{amenta98crust,amenta98new,dey99curve,hoppe92surface,amenta02simple, dey01reconstructing} on reconstructing curves from point clouds, i.e. $\pointData$. The problem of reconstruction a curve only from point datais a rather more difficult problem; for this reason, the results available there are weaker.
+
+//ADD ANALOGY TO INTERPOLATION//
+
+\section{Setup}
+
+\begin{assumption}
+  We assume each curve has bounded curvature:
+  \begin{equation}
+    \label{eq:curvatureAssumption}
+    \forall i \frac{
+      \gamma_{i,x}'(t) \gamma_{i,y}''(t) - \gamma_{i,y}'(t) \gamma_{i,x}''(t)
+    } {
+      (\gamma_{i,x}'(t)^{2}+\gamma_{i,y}'(t)^{2})^{3/2}
+    } \leq \kmax
+  \end{equation}
+
+\end{assumption}
+
+
+
+\bibliography{../stucchio}
+\bibliographystyle{hplain}
+
+\end{document}
