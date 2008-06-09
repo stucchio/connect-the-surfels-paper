@@ -143,11 +143,17 @@ Any other curve $\gamma(t)$ must lie between these curves (the blue and green cu
 \end{figure}
 \end{proof}
 
-This shows that the extra information the tangents provides us can be used to exclude certain edges from the polygonalization.
+This shows that the extra information the tangents provides us can be used to exclude certain edges from the polygonalization; basically, all edges should point roughly in the direction of the tangent. This allows us to reject edges which would point in the wrong direction, yielding a more accurate polygonalization (c.f. Fig. \ref{fig:proximityVsTangentBased}).
 
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{tangents_good_for.eps}
 
-
-
+\caption{A naive proximity-based reconstruction algorithm will add edges between separated curves which are close together. $\beta$-crust based algorithms will make similar errors, although it will have no self-intersections. However, each point on the lower arc is in the forbidden zone for points on the upper arc (indicated in pink); removing edges which enter the forbidden zones yields a correct polygonalization. }
+\label{fig:proximityVsTangentBased}
+\end{figure}
 
 
 \bibliography{../stucchio}

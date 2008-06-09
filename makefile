@@ -14,10 +14,13 @@ ctd.dvi: ctd.tex figures
 	latex ctd.tex
 	latex ctd.tex
 
-figures: forbidden_zone.eps polygonalization_example.eps
+figures: forbidden_zone.eps polygonalization_example.eps tangents_good_for.eps
 
 forbidden_zone.eps: forbidden_zone.py
 	python forbidden_zone.py
 
 polygonalization_example.eps: polygonalization_example.py misc.py
 	python polygonalization_example.py
+
+tangents_good_for.eps: tangents_good_for.py
+	python tangents_good_for.py
