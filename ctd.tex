@@ -119,24 +119,18 @@ We assume there is a set of curves $\curveSet$, which we call the figure. Our go
 \label{fig:polygonalization}
 \end{figure}
 
-The following basic result is
+The following basic result will be used widely in this paper, and illustrates the benefits derived from tangential information.
 \begin{lemma}
   \label{lem:forbiddenZone}
-  For every $i \neq j$, if $p_{j} \in \ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$, then either:
-  \begin{enumerate}[a.]
-  \item The points $p_{i}$ and $p_{j}$ are not on the same curve.
-  \item The the curve $\gamma_{k}(t)$ connecting $p_{i}$ to $p_{j}$ has arc length greater than $\kmaxi \pi/2$ between $p_{i}$ and $p_{j}$.
-  \end{enumerate}
-  We refer to the set $\ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$ as the \emph{forbidden zone}; this region is illustrated in Fig. \ref{fig:forbiddenZone}.
+  For every $i \neq j$, if $p_{j} \in \ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$, then $(p_{i},p_{j})$ is not an edge in $\poly$.
+
+  We refer to the set $\cup_{\pm} \ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$ as the \emph{forbidden zone}; this region is illustrated in Fig. \ref{fig:forbiddenZone}.
 \end{lemma}
 
 \begin{proof}
-  Suppose for simplicity that $p_{i}=(0,0)$ and $m_{i}=(1,0)$.
+  Suppose for simplicity that $p_{i}=(0,0)$ and $m_{i}=(1,0)$. Now, consider a line $\tau(t)$ of maximal curvature. The curve of maximal curvature, with $\tau_{y}'(t) > 0$ and proceeding at speed $\kmaxi$ is $\tau^{+}(t)=(\kmaxi \sin(t), \kmaxi (1-\cos(t)))$, while the curve with $\tau_{y}'(t) < 0$ is $\tau^{-}(t)=(\kmaxi \sin(t), \kmaxi (\cos(t)-1))$.
 
-  Now, consider a line $\tau(t)$ of maximal curvature. The curve of maximal curvature, with $\tau_{y}'(t) > 0$ and proceeding at speed $\kmaxi$ is $\tau^{+}(t)=(\kmaxi \sin(t), \kmaxi (1-\cos(t)))$, while the curve with $\tau_{y}'(t) < 0$ is $\tau^{-}(t)=(\kmaxi \sin(t), \kmaxi (\cos(t)-1))$.
-
-Any other curve $\gamma(t)$ must not cross one of these curves (the blue and green curves in Fig \ref{lem:forbiddenZone}). Thus, it is confined to the blue region while it's arc length is less than $\kmaxi \pi/2$. If $\gamma(t)$ connects $p_{i}$ to $p_{j}$, then it must do so after travelling a distance greater than $\kmaxi \pi/2$.
-\end{proof}
+Any other curve $\gamma(t)$ must lie between these curves (the blue and green curves in Fig \ref{lem:forbiddenZone}). Thus, it is confined to the blue region while it's arc length is less than $\kmaxi \pi/2$. If $\gamma(t)$ connects $p_{i}$ to $p_{j}$, then it must do so after travelling a distance greater than $\kmaxi \pi/2$.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -147,6 +141,12 @@ Any other curve $\gamma(t)$ must not cross one of these curves (the blue and gre
 \caption{The forbidden zones, as described in Lemma \ref{lem:forbiddenZone}. The pink is the forbidden zone, and the blue is the set of points a distance $\pi \kmaxi/2$ away from $p_{i}$.}
 \label{fig:forbiddenZone}
 \end{figure}
+\end{proof}
+
+This shows that the extra information the tangents provides us can be used to exclude certain edges from the polygonalization.
+
+
+
 
 
 
