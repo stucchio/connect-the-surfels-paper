@@ -38,8 +38,8 @@ legend()
 ax.plot([0,], [0,], "go-")
 text(0.1,0.05, "$p_{i}$", horizontalalignment="center")
 
-xticks([-1,0,1], ["$-\kappa_m$","$p_{i,x}$", "$\kappa_m$"])
-yticks([-1,0,1], ["$-\kappa_m$","$p_{i,y}$", "$\kappa_m$"])
+xticks([-1,0,1], ["$-1/\kappa_m$","$p_{i,x}$", "$1/\kappa_m$"])
+yticks([-1,0,1], ["$-1/\kappa_m$","$p_{i,y}$", "$1/\kappa_m$"])
 
 
 title("Forbidden regions")
