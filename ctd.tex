@@ -53,6 +53,7 @@
 \newcommand{\tanData}{{ \{ m_{i} \}_{i=\OtoN} }}
 
 \newcommand{\curveSet}{{ \{ \gamma_i(t) \}_{\Oto{M}}}}
+\newcommand{\poly}{{\Gamma}}
 
 \newcommand{\ball}[2]{ { B_{#1}(#2) } }
 
@@ -97,6 +98,30 @@ As is normal for most interpolation theorems, we need an assumption on the curva
 
 \subsection{Basics}
 
+We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polyganlization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$.
+
+\begin{definition}
+  \label{def:polygonalization}
+  A polygonalization graph of the set of curves $\curveSet$ is a planar graph $(V,E)$ with the following properties:
+  \begin{enumerate}
+  \item For all points $q \in V$, $q=\gamma_{i}(t)$ for some $i=\Oto{M}$ and some $t \in [0,1]$.
+  \item The statement that $(q,q') \in E$ is equivalent to the statement that $\exists i, \exists t', t'' s.t. \gamma_{i}(t')=q, \gamma_{i}(t'')=q$ and for all $q'' \in V$, there is no $t' < \hat{t} < t''$ such that $\gamma_{i}(\hat{t}) = q''$.
+  \end{enumerate}
+  For the set of points $\pointData$, we let $\poly=\poly(\pointData, \curveSet)$ denote the polyonalization of $\curveSet$ with $V=\pointData$.
+\end{definition}
+Basically, this says that a all edges in the polygonalization graph are merely straightened versions of the edges coming from the figure. See Fig. \ref{fig:polygonalization} for an example.
+
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{polygonalization_example.eps}
+
+\caption{A curve and it's polygonalization, c.f. Definition \ref{def:polygonalization}. }
+\label{fig:polygonalization}
+\end{figure}
+
+The following basic result is
 \begin{lemma}
   \label{lem:forbiddenZone}
   For every $i \neq j$, if $p_{j} \in \ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$, then either:
