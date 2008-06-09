@@ -104,14 +104,10 @@ We assume there is a set of curves $\curveSet$, which we call the figure. Our go
 
 \begin{definition}
   \label{def:polygonalization}
-  A polygonalization graph of the set of curves $\curveSet$ is a planar graph $(V,E)$ with the following properties:
-  \begin{enumerate}
-  \item For all points $q \in V$, $q=\gamma_{i}(t)$ for some $i=\Oto{M}$ and some $t \in [0,1]$.
-  \item The statement that $(q,q') \in E$ is equivalent to the statement that $\exists i, \exists t', t'' s.t. \gamma_{i}(t')=q, \gamma_{i}(t'')=q$ and for all $q'' \in V$, there is no $t' < \hat{t} < t''$ such that $\gamma_{i}(\hat{t}) = q''$.
-  \end{enumerate}
-  For the set of points $\pointData$, we let $\poly=\poly(\pointData, \curveSet)$ denote the polyonalization of $\curveSet$ with $V=\pointData$.
+  A polygonalization of a set of curves $\curveSet$ is a planar graph $(V,E)$ with the property that each vertex $p \in V$ is a point on some $\gamma_{i}(t)$, and each edge connects points which are adjacent samples of some curve $\gamma_{i}$.
+
+  See Fig. \ref{fig:polygonalization} for an example.
 \end{definition}
-Basically, this says that a all edges in the polygonalization graph are merely straightened versions of the edges coming from the figure. See Fig. \ref{fig:polygonalization} for an example.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
