@@ -1,6 +1,6 @@
 all: ctd
 
-ctd: ctd.pdf
+ctd: ctd.pdf ctd.dvi
 
 ctd.pdf: ctd.ps
 	ps2pdf ctd.ps
