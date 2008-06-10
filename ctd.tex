@@ -201,11 +201,16 @@ This shows that the extra information the tangents provides us can be used to ex
 Any edge in the polygonalization starting at $\vp$, with length shorter than $\epsilon$, must connect to another point $\vp' \in \allowed{\epsilon}{p}$.
 
 \begin{lemma}
+  \label{lem:separationAllowedRegions}
   Let $\gamma_{i}(t)$ and $\gamma_{j}(t)$ be separated by a distance at least $\delta$. Then for all $t, t'$, if
   \begin{subequations}
     \label{eq:separationCondition}
     \begin{equation}
-      \delta > \kmax \epsilon^{2}/2
+      \delta > 2\kmax \epsilon^{2}
+    \end{equation}
+    \begin{equation}
+      \label{eq:constraintOnkmaxEpsilon}
+      \kmax \epsilon < \frac{1}{\sqrt{2}}
     \end{equation}
     then
     \begin{equation}
@@ -219,13 +224,23 @@ Any edge in the polygonalization starting at $\vp$, with length shorter than $\e
   \vp + \vm \kmaxi \sin(\theta) \pm \vm^{\perp} \kmaxi (1-\cos(\theta)).
 \end{equation*}
 Now, for any $\vq \in \gamma_{i} $ and $\vq \in \allowed{\epsilon}{\vp}$, the distance between $\vq$ and $L$ is the normal distance to $L$. This distance is bounded by:
-\begin{multline*}
+\begin{multline}
+  \label{eq:1}
   d(\vq,L) \leq
   \sup_{\theta} \kmaxi \abs{(1-\cos(\theta)) }\\
   \leq
   \sup_{\theta} \kmaxi 2 \sin^{2}(\theta/2) =
-  2\kmaxi \sin^{2}( \arcsin(\epsilon \kmax)/2) \leq \kmax \epsilon^{2}/2
-\end{multline*}
+  2\kmaxi \sin^{2}( \arcsin(\epsilon \kmax)/2)
+\end{multline}
+The intermediate value theorem implies $\arcsin( x) \leq \arcsin'(\zeta) x=(1-\zeta^{2})^{-1/2} x$ for some $\zeta \in [0,x]$; since $\epsilon \kmax < 2^{-1/2}$, we find that:
+\begin{equation*}
+  \arcsin(\epsilon \kmax) \leq (1-(2^{-1/2})^{2})^{-1/2} \kmax \epsilon = \sqrt{2} \kmax \epsilon
+\end{equation*}
+Substituting this into \eqref{eq:1} yields:
+\begin{equation}
+  \eqref{eq:1} \leq  2 \kmaxi \sin^{2}( \sqrt{2} \kmax \epsilon/2) \leq \kmax \epsilon^{2}
+\end{equation}
+
 Thus, the \emph{normal} distance between any point in $\allowed{\epsilon}{\vp}$ and $L$ is $O(\kmax \epsilon^{2})$.
 
 If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$, then clearly $\gamma_{j}(t') \nin \allowed{\epsilon}{\gamma_{i}(t)}$ so we assume $\gamma_{j}(t') \in L+\vm^{\perp} \RR$. In this case, $\gamma_{j}(t') = \vp + \vm \kmaxi \sin(\theta_{0}) + \vm^\perp z$, with $z \in \RR$ the normal (relative to $L$) distance to $L$.
@@ -233,9 +248,9 @@ If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$, then clearly $\gamma_{j}(t') \nin \a
 By the second triangle inequality,
 \begin{equation*}
   d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \abs{d_{\vm^{\perp}}(\gamma_{j}, \gamma_{i}) -  d_{\vm^{\perp}}(\gamma_{i}, L)}
-  \geq \delta - \kmax \epsilon^{2}/2 > \kmax \epsilon^{2}/2
+  \geq \delta - \kmax \epsilon^{2} > \kmax \epsilon^{2}
 \end{equation*}
-But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \kmax \epsilon^{2}/2$, and thus $\gamma_{j}(t') \nin \allowed{\epsilon}{\vp}$.
+But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \kmax \epsilon^{2}$, and thus $\gamma_{j}(t') \nin \allowed{\epsilon}{\vp}$.
 \end{proof}
 
 
