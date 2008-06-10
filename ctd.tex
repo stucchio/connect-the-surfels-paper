@@ -41,22 +41,29 @@
 %standard macros
 \newcommand{\abs}[1]{\left| #1 \right|}%Absolute value
 \newcommand{\absSmall}[1]{| #1 |}%Absolute value, small
-
+\newcommand{\RR}[0]{{\mathbb{R}}}
 
 %Handy macros
+
+\newcommand{\vx}[0]{{\vec{x}}}
+\newcommand{\vp}[0]{{\vec{p}}}
+\newcommand{\vq}[0]{{\vec{q}}}
+\newcommand{\vm}[0]{{\vec{m}}}
+\newcommand{\vv}[0]{{\vec{v}}}
 
 \newcommand{\oneto}[1]{{1 \ldots #1}}
 \newcommand{\onetoN}[0]{{1 \ldots N}}
 \newcommand{\Oto}[1]{{0 \ldots #1-1}}
 \newcommand{\OtoN}{{0 \ldots N-1}}
 
-\newcommand{\pointData}{{ \{ p_{i} \}_{i=\OtoN} }}
-\newcommand{\tanData}{{ \{ m_{i} \}_{i=\OtoN} }}
+\newcommand{\pointData}{{ \{ \vp_{i} \}_{i=\OtoN} }}
+\newcommand{\tanData}{{ \{ \vm_{i} \}_{i=\OtoN} }}
 
 \newcommand{\curveSet}{{ \{ \gamma_i(t) \}_{\Oto{M}}}}
 \newcommand{\poly}{{\Gamma}}
 
 \newcommand{\ball}[2]{ { B_{#1}(#2) } }
+\newcommand{\allowed}[2]{ { A_{#1}(#2) } }
 
 \newcommand{\kmax}{{\kappa_{m}}}
 \newcommand{\kmaxi}{{\kmax^{-1}}}
@@ -77,11 +84,24 @@ Our goal in this work is to construct an algorithm which reconstructs the curve 
 
 //ADD ANALOGY TO INTERPOLATION//
 
+\subsection{The $\beta$-crust: reconstruction from points}
+
+
+
 \section{Setup}
 
 \begin{definition}
   \label{def:perp}
-  For a vector $v$, let $v^{\perp}$ denote the vector $v$ rotated $\pi/2$ to the right.
+  For a vector $\vv$, let $\vv^{\perp}$ denote the vector $\vv$ rotated $\pi/2$ to the right.
+\end{definition}
+
+\begin{definition}
+  \label{def:metric}
+  Let $d(\vp,\vq)$ denote the usual Euclidean metric, $d(\vp,\vq) = \abs{\vp - \vq}$. Let $d_{\vm}(\vp,\vq)$ denote the distance in the $\vm$ direction between $\vp$ and $\vq$, i.e. $d_{\vm}(\vp,vq) = \abs{ (\vp - \vq) \cdot \vm}$.
+\end{definition}
+
+\begin{definition}
+  For a point $\vp$ and a curve $\gamma_{i}(t)$, we say that $\vp \in \gamma_{i}(t)$ if $\exists t, \gamma_{i}(t)=\vp$.
 \end{definition}
 
 As is normal for most interpolation theorems, we need an assumption on the variation of the curve, in this case the curvature.
@@ -122,16 +142,10 @@ We assume there is a set of curves $\curveSet$, which we call the figure. Our go
 The following basic result will be used widely in this paper, and illustrates the benefits derived from tangential information.
 \begin{lemma}
   \label{lem:forbiddenZone}
-  For every $i \neq j$, if $p_{j} \in \ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$, then $(p_{i},p_{j})$ is not an edge in $\poly$.
+  For every $i \neq j$, if $\vp_{j} \in \ball{\kmaxi}{\vp_{i} \pm \vm_{i}^{\perp} \kmaxi}$, then $(\vp_{i},\vp_{j})$ is not an edge in $\poly$.
 
-  We refer to the set $\cup_{\pm} \ball{\kmaxi}{p_{i} \pm m_{i}^{\perp} \kmaxi}$ as the \emph{forbidden zone}; this region is illustrated in Fig. \ref{fig:forbiddenZone}.
+  We refer to the set $\cup_{\pm} \ball{\kmaxi}{\vp_{i} \pm \vm_{i}^{\perp} \kmaxi}$ as the \emph{forbidden zone}; this region is illustrated in Fig. \ref{fig:forbiddenZone}.
 \end{lemma}
-
-\begin{proof}
-  Suppose for simplicity that $p_{i}=(0,0)$ and $m_{i}=(1,0)$. Now, consider a line $\tau(t)$ of maximal curvature. The curve of maximal curvature, with $\tau_{y}'(t) > 0$ and proceeding at speed $\kmaxi$ is $\tau^{+}(t)=(\kmaxi \sin(t), \kmaxi (1-\cos(t)))$, while the curve with $\tau_{y}'(t) < 0$ is $\tau^{-}(t)=(\kmaxi \sin(t), \kmaxi (\cos(t)-1))$.
-
-Any other curve $\gamma(t)$ must lie between these curves (the blue and green curves in Fig \ref{lem:forbiddenZone}). Thus, it is confined to the blue region while it's arc length is less than $\kmaxi \pi/2$. If $\gamma(t)$ connects $p_{i}$ to $p_{j}$, then it must do so after travelling a distance greater than $\kmaxi \pi/2$.
-
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
@@ -141,6 +155,11 @@ Any other curve $\gamma(t)$ must lie between these curves (the blue and green cu
 \caption{The forbidden zones, as described in Lemma \ref{lem:forbiddenZone}. The pink is the forbidden zone, and the blue is the set of points a distance $\pi \kmaxi/2$ away from $p_{i}$.}
 \label{fig:forbiddenZone}
 \end{figure}
+\begin{proof}
+  Suppose for simplicity that $\vp_{i}=(0,0)$ and $\vm_{i}=(1,0)$. Now, consider a line $\tau(t)$ of maximal curvature. The curve of maximal curvature, with $\tau_{y}'(t) > 0$ and proceeding at speed $\kmaxi$ is $\tau^{+}(t)=(\kmaxi \sin(t), \kmaxi (1-\cos(t)))$, while the curve with $\tau_{y}'(t) < 0$ is $\tau^{-}(t)=(\kmaxi \sin(t), \kmaxi (\cos(t)-1))$.
+
+Any other curve $\gamma(t)$ must lie between these curves (the blue and green curves in Fig \ref{lem:forbiddenZone}). Thus, it is confined to the blue region while it's arc length is less than $\kmaxi \pi/2$. If $\gamma(t)$ connects $\vp_{i}$ to $\vp_{j}$, then it must do so after travelling a distance greater than $\kmaxi \pi/2$.
+
 \end{proof}
 
 This shows that the extra information the tangents provides us can be used to exclude certain edges from the polygonalization; basically, all edges should point roughly in the direction of the tangent. This allows us to reject edges which would point in the wrong direction, yielding a more accurate polygonalization (c.f. Fig. \ref{fig:proximityVsTangentBased}).
@@ -151,9 +170,59 @@ This shows that the extra information the tangents provides us can be used to ex
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{tangents_good_for.eps}
 
-\caption{A naive proximity-based reconstruction algorithm will add edges between separated curves which are close together. $\beta$-crust based algorithms will make similar errors, although it will have no self-intersections. However, each point on the lower arc is in the forbidden zone for points on the upper arc (indicated in pink); removing edges which enter the forbidden zones yields a correct polygonalization. }
+\caption{A naive proximity-based reconstruction algorithm (shown), or even $\beta$-crust type algorithms, will add edges between different curves. Knowledge of the forbidden zone (indicated in pink) allows us to remove such edges.}
 \label{fig:proximityVsTangentBased}
 \end{figure}
+
+\begin{definition}
+  Define the set $\allowed{\epsilon}{\vp}$ to be:
+  \begin{equation}
+    \label{eq:allowedRegion}
+    \allowed{\epsilon}{\vp}=\ball{\epsilon}{\vp_{i}} \setminus \left[ \cup_{\pm} \ball{\kmaxi}{\vp_{i} \pm \vm_{i}^{\perp} \kmaxi} \right]
+  \end{equation}
+  That is, $\allowed{\epsilon}{\vp}$ is the ball of radius $\epsilon$ about $p$ excluding the forbidden zone.  We call this the \emph{allowed zone} or \emph{allowed region}.
+\end{definition}
+Any edge in the polygonalization starting at $\vp$, with length shorter than $\epsilon$, must connect to another point $\vp' \in \allowed{\epsilon}{p}$.
+
+\begin{lemma}
+  Let $\gamma_{i}(t)$ and $\gamma_{j}(t)$ be separated by a distance at least $\delta$. Then for all $t, t'$, if
+  \begin{subequations}
+    \label{eq:separationCondition}
+    \begin{equation}
+      \delta > \kmax \epsilon^{2}/2
+    \end{equation}
+    then
+    \begin{equation}
+      \gamma_{j}(t')  \nin  \allowed{\epsilon}{\gamma_{i}(t)}.
+    \end{equation}
+  \end{subequations}
+\end{lemma}
+\begin{proof}
+  Fix $t$, and define $\vp=\gamma_{i}(t)$ and $\vm=\gamma_{i}'(t) / \abs{\gamma_{i}'(t)}$. Define $L$ to be the line segment $L= \{ \vp+\vm \kmaxi \sin(\theta) : \theta \in [-\arcsin(\epsilon \kmax),\arcsin(\epsilon \kmax)] \}$. The boundaries of $\allowed{\epsilon}{\vp}$ are given by
+\begin{equation*}
+  \vp + \vm \kmaxi \sin(\theta) \pm \vm^{\perp} \kmaxi (1-\cos(\theta)).
+\end{equation*}
+Now, for any $\vq \in \gamma_{i} $ and $\vq \in \allowed{\epsilon}{\vp}$, the distance between $\vq$ and $L$ is the normal distance to $L$. This distance is bounded by:
+\begin{multline*}
+  d(\vq,L) \leq
+  \sup_{\theta} \kmaxi \abs{(1-\cos(\theta)) }\\
+  \leq
+  \sup_{\theta} \kmaxi 2 \sin^{2}(\theta/2) =
+  2\kmaxi \sin^{2}( \arcsin(\epsilon \kmax)/2) \leq \kmax \epsilon^{2}/2
+\end{multline*}
+Thus, the \emph{normal} distance between any point in $\allowed{\epsilon}{\vp}$ and $L$ is $O(\kmax \epsilon^{2})$.
+
+If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$, then clearly $\gamma_{j}(t') \nin \allowed{\epsilon}{\gamma_{i}(t)}$ so we assume $\gamma_{j}(t') \in L+\vm^{\perp} \RR$. In this case, $\gamma_{j}(t') = \vp + \vm \kmaxi \sin(\theta_{0}) + \vm^\perp z$, with $z \in \RR$ the normal (relative to $L$) distance to $L$.
+
+By the second triangle inequality,
+\begin{equation*}
+  d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \abs{d_{\vm^{\perp}}(\gamma_{j}, \gamma_{i}) -  d_{\vm^{\perp}}(\gamma_{i}, L)}
+  \geq \delta - \kmax \epsilon^{2}/2 > \kmax \epsilon^{2}/2
+\end{equation*}
+But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \kmax \epsilon^{2}/2$, and thus $\gamma_{j}(t') \nin \allowed{\epsilon}{\vp}$.
+\end{proof}
+
+
 
 
 \bibliography{../stucchio}
