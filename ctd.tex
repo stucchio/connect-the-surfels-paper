@@ -68,6 +68,8 @@
 \newcommand{\kmax}{{\kappa_{m}}}
 \newcommand{\kmaxi}{{\kmax^{-1}}}
 
+\newcommand{\curvesep}{{\delta}}
+
 \begin{document}
 
 \title{Reconstructing Curves from Points and Tangents}
@@ -80,15 +82,58 @@
 
 In this work, we consider the problem of reconstructing a $C^{1}$ family of curves $\curveSet$ from data consisting of an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$. Note that the tangents have no particular orientation; we identify $m_{i}$ with $-m_{i}$.
 
-Our goal in this work is to construct an algorithm which reconstructs the curve from this data. Similar topics have been the subject of considerable attention, in particular there is much work\cite{amenta98crust,amenta98new,dey99curve,hoppe92surface,amenta02simple, dey01reconstructing} on reconstructing curves from point clouds, i.e. $\pointData$. The problem of reconstruction a curve only from point datais a rather more difficult problem; for this reason, the results available there are weaker.
+Our goal in this work is to construct an algorithm which reconstructs the polygonalization of the curve from this data. An example of a polygonalization is given in Figure \ref{fig:polygonalization}.
 
-//ADD ANALOGY TO INTERPOLATION//
+\begin{definition}
+  \label{def:polygonalization}
+  A polygonalization of a set of curves $\curveSet$ is a planar graph $(V,E)$ with the property that each vertex $p \in V$ is a point on some $\gamma_{i}(t)$, and each edge connects points which are adjacent samples of some curve $\gamma_{i}$.
+\end{definition}
 
-\subsection{The $\beta$-crust: reconstruction from points}
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{polygonalization_example.eps}
 
+\caption{A curve and it's polygonalization, c.f. Definition \ref{def:polygonalization}. }
+\label{fig:polygonalization}
+\end{figure}
 
+The topic of reconstructing curves solely from point data, i.e. $\pointData$, has been the subject of considerable attention \cite{amenta98crust,amenta98new,dey99curve,hoppe92surface,amenta02simple, dey01reconstructing}. This is actually a more difficult problem, and only weaker results are possible. The main difficulty is the following; if the distance between two separate curves $\gamma_{i}$ and $\gamma_{j}$ is smaller than the sample spacing, then it is difficult to determine which points are associated to which curve. Thus, sample spacing must be $O(\curvesep)$, with $\curvesep$ the distance between different curves.
 
-\section{Setup}
+Tangential information makes this task easier; if two points are nearby (say $\vp_{1}$ and $\vp_{2}$), but $\pm \vm_{1}$ does not point (roughly) in the direction $\vp_{2}-\vp_{1}$, then $\vp_{1}$ and $\vp_{2}$ should not be connected. This fact allows us to reduce the sample spacing to $O(\curvesep^{1/2})$, rather than $O(\curvesep)$. This is to be expected; knowledge of a function and it's derivatives allows interpolation with quadratic accuracy.
+
+In this work, we present an algorithm which allows us to reconstruct a curve from $\pointData$ and $\tanData$. We make two assumptions, under which the algorithm is provably correct.
+
+\begin{assumption}
+  \label{ass:curvature}
+  We assume each curve $\gamma_{i}$ has bounded curvature:
+  \begin{equation}
+    \label{eq:curvatureAssumption}
+    \forall i = \Oto{M}, ~ \frac{
+      \abs{\gamma_{i,x}'(t) \gamma_{i,y}''(t) - \gamma_{i,y}'(t) \gamma_{i,x}''(t)}
+    } {
+      (\gamma_{i,x}'(t)^{2}+\gamma_{i,y}'(t)^{2})^{3/2}
+    } \leq \kmax
+  \end{equation}
+\end{assumption}
+
+This assumption is necessary to prevent the curves from oscillating too much between samples.
+
+\begin{assumption}
+  \label{ass:separation}
+  We assume the curves $\gamma_{i}$ and $\gamma_{j}$ are uniformly separated from each other, i.e.:
+  \begin{equation}
+    \label{eq:separationAssumption}
+    \sup_{t,t'} \abs{ \gamma_{i}(t) - \gamma_{j}(t')} \geq \curvesep \textrm{~for~} i \neq j
+  \end{equation}
+\end{assumption}
+
+This assumption makes sure the curves do not come too close together for us to determine which points correspond to which curve.
+
+\section{Geometry}
+\subsection{Definition and notations}
+Before we begin, we define some notation which we will use.
 
 \begin{definition}
   \label{def:perp}
@@ -106,38 +151,9 @@ Our goal in this work is to construct an algorithm which reconstructs the curve 
 
 As is normal for most interpolation theorems, we need an assumption on the variation of the curve, in this case the curvature.
 
-\begin{assumption}
-  We assume each curve has bounded curvature:
-  \begin{equation}
-    \label{eq:curvatureAssumption}
-    \forall i = \Oto{M}, ~ \frac{
-      \abs{\gamma_{i,x}'(t) \gamma_{i,y}''(t) - \gamma_{i,y}'(t) \gamma_{i,x}''(t)}
-    } {
-      (\gamma_{i,x}'(t)^{2}+\gamma_{i,y}'(t)^{2})^{3/2}
-    } \leq \kmax
-  \end{equation}
-\end{assumption}
-
 \subsection{Basics}
 
 We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polyganlization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$.
-
-\begin{definition}
-  \label{def:polygonalization}
-  A polygonalization of a set of curves $\curveSet$ is a planar graph $(V,E)$ with the property that each vertex $p \in V$ is a point on some $\gamma_{i}(t)$, and each edge connects points which are adjacent samples of some curve $\gamma_{i}$.
-
-  See Fig. \ref{fig:polygonalization} for an example.
-\end{definition}
-
-\begin{figure}
-\setlength{\unitlength}{0.240900pt}
-\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
-\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
-\includegraphics[scale=0.5]{polygonalization_example.eps}
-
-\caption{A curve and it's polygonalization, c.f. Definition \ref{def:polygonalization}. }
-\label{fig:polygonalization}
-\end{figure}
 
 The following basic result will be used widely in this paper, and illustrates the benefits derived from tangential information.
 \begin{lemma}
