@@ -127,9 +127,26 @@ This assumption is necessary to prevent the curves from oscillating too much bet
     \label{eq:separationAssumption}
     \sup_{t,t'} \abs{ \gamma_{i}(t) - \gamma_{j}(t')} \geq \curvesep \textrm{~for~} i \neq j
   \end{equation}
+  We also assume different areas of the same curve are separated from each other:
+  \begin{equation}
+    \label{eq:separationAssumptionSameCurve}
+    \sup_{\abs{t-t'} > \kmaxi\pi/2 } \abs{ \gamma_{i}(t) - \gamma_{i}(t')} \geq \curvesep
+  \end{equation}
+  (assuming the curve $\gamma_{i}(t)$ proceeds with unit speed).
 \end{assumption}
 
-This assumption makes sure the curves do not come too close together for us to determine which points correspond to which curve.
+This assumption makes sure the curves do not come too close together for us to determine which points correspond to which curve (or which part of the same curve). This is illustrated in Figure \ref{fig:separationBetweenCurves}.
+
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{assumption_two.eps}
+
+\caption{An illustration of Assumption \ref{ass:separation}. The black arrow illustrates \eqref{eq:separationAssumption}, while the red arrow illustrates \eqref{eq:separationAssumptionSameCurve}.}
+\label{fig:separationBetweenCurves}
+\end{figure}
+
 
 \section{Geometry}
 \subsection{Definition and notations}
