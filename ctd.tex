@@ -168,7 +168,7 @@ Before we begin, we define some notation which we will use.
 
 As is normal for most interpolation theorems, we need an assumption on the variation of the curve, in this case the curvature.
 
-\subsection{Basics}
+\subsection{Local results}
 
 We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polyganlization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$.
 
@@ -219,7 +219,7 @@ Any edge in the polygonalization starting at $\vp$, with length shorter than $\e
 
 \begin{lemma}
   \label{lem:separationAllowedRegions}
-  Let $\gamma_{i}(t)$ and $\gamma_{j}(t)$ be separated by a distance at least $\delta$. Then for all $t, t'$, if
+  Let $i \neq j$ and let Assumption \ref{ass:separation} hold. Then for all $t, t'$, if
   \begin{subequations}
     \label{eq:separationCondition}
     \begin{equation}
@@ -231,9 +231,11 @@ Any edge in the polygonalization starting at $\vp$, with length shorter than $\e
     \end{equation}
     then
     \begin{equation}
+      \label{eq:connectionsBetweenDifferentCurvesNotAllowed}
       \gamma_{j}(t')  \nin  \allowed{\epsilon}{\gamma_{i}(t)}.
     \end{equation}
   \end{subequations}
+  Similarly, if $i=j$ and $\abs{t-t'} \geq \kmax^{-1} \pi/2$, then \eqref{eq:connectionsBetweenDifferentCurvesNotAllowed} holds.
 \end{lemma}
 \begin{proof}
   Fix $t$, and define $\vp=\gamma_{i}(t)$ and $\vm=\gamma_{i}'(t) / \abs{\gamma_{i}'(t)}$. Define $L$ to be the line segment $L= \{ \vp+\vm \kmaxi \sin(\theta) : \theta \in [-\arcsin(\epsilon \kmax),\arcsin(\epsilon \kmax)] \}$. The boundaries of $\allowed{\epsilon}{\vp}$ are given by
@@ -249,7 +251,7 @@ Now, for any $\vq \in \gamma_{i} $ and $\vq \in \allowed{\epsilon}{\vp}$, the di
   \sup_{\theta} \kmaxi 2 \sin^{2}(\theta/2) =
   2\kmaxi \sin^{2}( \arcsin(\epsilon \kmax)/2)
 \end{multline}
-The intermediate value theorem implies $\arcsin( x) \leq \arcsin'(\zeta) x=(1-\zeta^{2})^{-1/2} x$ for some $\zeta \in [0,x]$; since $\epsilon \kmax < 2^{-1/2}$, we find that:
+The intermediate value theorem implies $\arcsin( x) \leq \arcsin'(\zeta) x=(1-\zeta^{2})^{-1/2} x$ for some $\zeta \in [0,x]$; since $\epsilon \kmax < 2^{-1/2}$ (by \eqref{eq:constraintOnkmaxEpsilon}), we find that:
 \begin{equation*}
   \arcsin(\epsilon \kmax) \leq (1-(2^{-1/2})^{2})^{-1/2} \kmax \epsilon = \sqrt{2} \kmax \epsilon
 \end{equation*}
@@ -268,6 +270,8 @@ By the second triangle inequality,
   \geq \delta - \kmax \epsilon^{2} > \kmax \epsilon^{2}
 \end{equation*}
 But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \kmax \epsilon^{2}$, and thus $\gamma_{j}(t') \nin \allowed{\epsilon}{\vp}$.
+
+The proof when $i=j$ is identical.
 \end{proof}
 
 
