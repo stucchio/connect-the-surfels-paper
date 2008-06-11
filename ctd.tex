@@ -303,8 +303,30 @@ The following result, which follows immediately from Lemma \ref{lem:separationAl
 We have now shown that $G$ separates distinct curves, and that $G$ contains the diagonalization of $\curveSet$.
 
 \begin{lemma}
-  Suppose the graph $G$ has
+  \label{eq:closestTangentPointInAllowedRegionIsCorrect}
+  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $\vp_{j} \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+
+  Then only edge in the polygonalization of $\gamma$ is the edge for which $\vp_{j} \cdot \vm_{0}$ is minimal.
 \end{lemma}
+\begin{proof}
+  Change coordinates so that $\vm_{0} = (1,0)$, and parameterize $\gamma(t)=(t,w(t))$. This parameterization is valid locally; the conclusion follows immediately if all points $\vp_{j}$ are contained in the region where this parameterization is valid.
+
+  All we need to do is show that this parameterization is valid on a region of size $\epsilon \kmax$. This can be done as follows. The parameterization breaks down when $w'(t)$ blows up, we need to show that this does not happen before $t=\epsilon$. Plugging this parameterization into the curvature bound \eqref{eq:curvatureAssumption} yields:
+  \begin{equation*}
+    \frac{ \abs{w''(t)} }{(1+w'(t)^{2})^{3/2}} \leq \kmax
+  \end{equation*}
+  Assuming $w''(t)$ is positive, this is a first order nonlinear differential inequality for $w'(t)$. We can integrate both sides (using the hyperbolic trig substitution $w(t)=\sinh(\theta)$ for the left side) to obtain:
+  \begin{equation*}
+    \tanh(w'(t)) \leq \kmax t
+  \end{equation*}
+  or
+  \begin{equation*}
+    w'(t) \leq \textrm{arctanh}(\kmax t) = \frac{1}{2} \ln\left(\frac{1+\kmax t}{1-\kmax t} \right)
+  \end{equation*}
+  This is finite for $\kmax t < 1$, or $t < \kmaxi 1$. Thus, the parameterization is valid for $t < \kmaxi$.
+
+  Since each point $\vp_{j} \in \allowed{\epsilon}{\vp_{0}}$, and since $\epsilon < 1/\kmax \sqrt{2}$ (by \eqref{eq:constraintOnkmaxEpsilon}), this in particular implies each point $\vp_{j}$ is in the region where $t < \kmaxi$.
+\end{proof}
 
 \bibliography{../stucchio}
 \bibliographystyle{hplain}
