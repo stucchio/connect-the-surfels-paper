@@ -361,14 +361,15 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
     \frac{ \abs{w''(t)} }{(1+w'(t)^{2})^{3/2}} \leq \kmax
   \end{equation*}
   Assuming $w''(t)$ is positive, this is a first order nonlinear differential inequality for $w'(t)$. We can integrate both sides (using the hyperbolic trig substitution $w(t)=\sinh(\theta)$ for the left side) to obtain:
+  \begin{equation}
+    \label{eq:2}
+    \frac{w'(t)}{\sqrt{1+w'(t)^{2}}} \leq \kmax t
+  \end{equation}
+  Define $f(z)=z/\sqrt{1+z^{2}}$, then $f^{-1}(z)$ is singular only at $z=\pm 1$, and is regular before that. Solving \eqref{eq:2} for $w'(t)$ shows that:
   \begin{equation*}
-    \tanh(w'(t)) \leq \kmax t
+    w'(t) \leq f^{-1}(\kmax t)
   \end{equation*}
-  or
-  \begin{equation*}
-    w'(t) \leq \textrm{arctanh}(\kmax t) = \frac{1}{2} \ln\left(\frac{1+\kmax t}{1-\kmax t} \right)
-  \end{equation*}
-  This is finite for $\kmax t < 1$, or $t < \kmaxi 1$. Thus, the parameterization is valid for $t < \kmaxi$.
+  implying that $w'(t)$ is finite for $\kmax t < 1$, or $t < \kmaxi 1$. Thus, the parameterization is valid for $t < \kmaxi$.
 
   Since each point $\vp_{j} \in \allowed{\epsilon}{\vp_{0}}$, and since $\epsilon < 1/\kmax \sqrt{2}$ (by \eqref{eq:constraintOnkmaxEpsilon}), this in particular implies each point $\vp_{j}$ is in the region where $t < \kmaxi$.
 \end{proof}
