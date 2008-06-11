@@ -221,7 +221,7 @@ Any edge in the polygonalization starting at $\vp$, with length shorter than $\e
 We are now ready to describe the polygonalization algorithm.
 
 \begin{algo}
-  \label{algo:propagation}
+  \label{algo:polygonalization}
   {\bf Polygonalization Algorithm }
 
   { \bf Input: }
@@ -260,27 +260,36 @@ We are now ready to describe the polygonalization algorithm.
 
 \end{algo}
 
+We also have the following result, which guarantees the correctness of Algorithm \ref{algo:polygonalization}.
 
-\subsection{Proofs}
-
-\begin{lemma}
-  \label{lem:separationAllowedRegions}
-  Let $i \neq j$ and let Assumption \ref{ass:separation} hold. Then for all $t, t'$, if
+\begin{theorem}
+  \label{thm:proofOfAlgo}
+  Suppose that:
   \begin{subequations}
     \label{eq:separationCondition}
     \begin{equation}
       \delta > 2\kmax \epsilon^{2}
     \end{equation}
+    where $\curvesep$ is as in Assumption \ref{ass:separation} and also
     \begin{equation}
       \label{eq:constraintOnkmaxEpsilon}
-      \kmax \epsilon < \frac{1}{\sqrt{2}}
-    \end{equation}
-    then
-    \begin{equation}
-      \label{eq:connectionsBetweenDifferentCurvesNotAllowed}
-      \gamma_{j}(t')  \nin  \allowed{\epsilon}{\gamma_{i}(t)}.
+      \epsilon < \frac{1}{ \kmax \sqrt{2}}
     \end{equation}
   \end{subequations}
+  Suppose also that the distance between adjacent samples in the polygonalization is $\epsilon$, i.e. the curve is $\epsilon$-sampled. Then graph $\Gamma$ returned by Algorithm \ref{algo:polygonalization} is the diagonalization of $\curveSet$.
+\end{theorem}
+
+We prove this shortly.
+
+\subsection{Proof of Theorem \ref{thm:proofOfAlgo}}
+
+\begin{lemma}
+  \label{lem:separationAllowedRegions}
+  Let $i \neq j$ and let Assumption \ref{ass:separation} hold. Then for all $t, t'$, if \eqref{eq:separationCondition} and \eqref{eq:constraintOnkmaxEpsilon} hold, then
+  \begin{equation}
+    \label{eq:connectionsBetweenDifferentCurvesNotAllowed}
+    \gamma_{j}(t')  \nin  \allowed{\epsilon}{\gamma_{i}(t)}.
+  \end{equation}
   Similarly, if $i=j$ and $\abs{t-t'} \geq \kmax^{-1} \pi/2$, then \eqref{eq:connectionsBetweenDifferentCurvesNotAllowed} holds.
 \end{lemma}
 \begin{proof}
@@ -320,21 +329,9 @@ But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'),
 The proof when $i=j$ is identical.
 \end{proof}
 
-\subsection{Global results}
+This result shows that the graph $G$, computed in Step 1 of Algorithm \ref{algo:polygonalization}, separates different $\gamma_{i}$ and $\gamma_{j}$ from each other, as well as different parts of the same curve. Thus, after Step 1, we are left with a graph $G$ having edges only between points $\vp_{i}$ and $\vp_{j}$ which are on the same curve $\gamma_{k}$, and which have are separated in $\gamma_{k}$ by an arc length no more than $\kmaxi \pi/2$.
 
-We now move on to global results concerning the geometry.
-
-The following result, which follows immediately from Lemma \ref{lem:separationAllowedRegions}, shows that one can build a graph separating curves very simply.
-
-\begin{definition}
-  Fix $\epsilon$ satisfying \eqref{eq:separationCondition} and \eqref{eq:constraintOnkmaxEpsilon}.
-
-  The allowed graph $G$ is defined to be the graph with vertex set $\pointData$, and with edges consisting of all those $(\vp_{i},\vp_{j})$, $i \neq j$ with the property that $\vp_{i} \in \allowed{\epsilon}{\vp_{j}}$ and $\vp_{j} \in \allowed{\epsilon}{\vp_{i}}$.
-\end{definition}
-
-\begin{remark}
-  It is an immediate conclusion of Lemma \ref{lem:separationAllowedRegions} that $G$ has no edges connecting different curves $\gamma_{k}$ and $\gamma_{l}$. Similarly, if any points are connected in $G$, then the arc length between these points is smaller than $\kmaxi \pi/2$.
-\end{remark}
+We now show that $G$ is a superset of the polygonalization.
 
 \begin{proposition}
   Suppose the point data $\pointData$ is $\epsilon$-sampled, i.e. if two points $\vp_{i}$ and $\vp_{j}$ are adjacent on the curve $\gamma_{k}$, then the \emph{arc length} between $\vp_{i}$ and $\vp_{j}$ is bounded by $\epsilon$. Then $G$ contains the polygonalization of $\curveSet$.
@@ -343,14 +340,19 @@ The following result, which follows immediately from Lemma \ref{lem:separationAl
   If the distance between adjacent points $\vp_{i}$ and $\vp_{j}$ is at most $\epsilon$, then $\vp_{j} \in \ball{\epsilon}{\vp_{i}}$. Since the segment of $\gamma_{k}$ between $\vp_{i}$ and $\vp_{j}$ has arc length less than $\epsilon$, $\vp_{j}$ is not in the forbidden zone of $\vp_{i}$ (by the same argument as in Lemma \ref{lem:forbiddenZone}. Thus, $\vp_{j} \in \allowed{\epsilon}{\vp_{i}}$ (and vice versa), and $(\vp_{i},\vp_{j})$ is an edge in $G$.
 \end{proof}
 
-We have now shown that $G$ separates distinct curves, and that $G$ contains the diagonalization of $\curveSet$.
+We have now shown that $G$ separates distinct curves, and that $G$ contains the polygonalization of $\curveSet$. It remains to show that $\Gamma$ is the polygonalization.
 
 \begin{lemma}
   \label{eq:closestTangentPointInAllowedRegionIsCorrect}
-  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $\vp_{j} \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
 
-  Then only edge in the polygonalization of $\gamma$ is the edge for which $\vp_{j} \cdot \vm_{0}$ is minimal.
+  Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
 \end{lemma}
+
+\begin{remark}
+  The minimal edge is the edge $\vr^{+}_{0}$ as computed in Step (2b) of Algorithm \ref{algo:polygonalization}.
+\end{remark}
+
 \begin{proof}
   Change coordinates so that $\vm_{0} = (1,0)$, and parameterize $\gamma(t)=(t,w(t))$. This parameterization is valid locally; the conclusion follows immediately if all points $\vp_{j}$ are contained in the region where this parameterization is valid.
 
@@ -370,6 +372,8 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 
   Since each point $\vp_{j} \in \allowed{\epsilon}{\vp_{0}}$, and since $\epsilon < 1/\kmax \sqrt{2}$ (by \eqref{eq:constraintOnkmaxEpsilon}), this in particular implies each point $\vp_{j}$ is in the region where $t < \kmaxi$.
 \end{proof}
+
+Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:polygonalization}, is the polygonalization of $\curveSet$.
 
 \bibliography{../stucchio}
 \bibliographystyle{hplain}
