@@ -274,8 +274,34 @@ But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'),
 The proof when $i=j$ is identical.
 \end{proof}
 
+\subsection{Global results}
 
+We now move on to global results concerning the geometry.
 
+The following result, which follows immediately from Lemma \ref{lem:separationAllowedRegions}, shows that one can build a graph separating curves very simply.
+
+\begin{definition}
+  Fix $\epsilon$ satisfying \eqref{eq:separationCondition} and \eqref{eq:constraintOnkmaxEpsilon}.
+
+  The allowed graph $G$ is defined to be the graph with vertex set $\pointData$, and with edges consisting of all those $(\vp_{i},\vp_{j})$, $i \neq j$ with the property that $\vp_{i} \in \allowed{\epsilon}{\vp_{j}}$ and $\vp_{j} \in \allowed{\epsilon}{\vp_{i}}$.
+\end{definition}
+
+\begin{remark}
+  It is an immediate conclusion of Lemma \ref{lem:separationAllowedRegions} that $G$ has no edges connecting different curves $\gamma_{k}$ and $\gamma_{l}$. Similarly, if any points are connected in $G$, then the arc length between these points is smaller than $\kmaxi \pi/2$.
+\end{remark}
+
+\begin{proposition}
+  Suppose the point data $\pointData$ is $\epsilon$-sampled, i.e. if two points $\vp_{i}$ and $\vp_{j}$ are adjacent on the curve $\gamma_{k}$, then the \emph{arc length} between $\vp_{i}$ and $\vp_{j}$ is bounded by $\epsilon$. Then $G$ contains the polygonalization of $\curveSet$.
+\end{proposition}
+\begin{proof}
+  If the distance between adjacent points $\vp_{i}$ and $\vp_{j}$ is at most $\epsilon$, then $\vp_{j} \in \ball{\epsilon}{\vp_{i}}$. Since the segment of $\gamma_{k}$ between $\vp_{i}$ and $\vp_{j}$ has arc length less than $\epsilon$, $\vp_{j}$ is not in the forbidden zone of $\vp_{i}$ (by the same argument as in Lemma \ref{lem:forbiddenZone}. Thus, $\vp_{j} \in \allowed{\epsilon}{\vp_{i}}$ (and vice versa), and $(\vp_{i},\vp_{j})$ is an edge in $G$.
+\end{proof}
+
+We have now shown that $G$ separates distinct curves, and that $G$ contains the diagonalization of $\curveSet$.
+
+\begin{lemma}
+  Suppose the graph $G$ has
+\end{lemma}
 
 \bibliography{../stucchio}
 \bibliographystyle{hplain}
