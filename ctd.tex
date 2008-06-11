@@ -123,15 +123,18 @@ This assumption is necessary to prevent the curves from oscillating too much bet
 \begin{assumption}
   \label{ass:separation}
   We assume the curves $\gamma_{i}$ and $\gamma_{j}$ are uniformly separated from each other, i.e.:
-  \begin{equation}
-    \label{eq:separationAssumption}
-    \sup_{t,t'} \abs{ \gamma_{i}(t) - \gamma_{j}(t')} \geq \curvesep \textrm{~for~} i \neq j
-  \end{equation}
-  We also assume different areas of the same curve are separated from each other:
-  \begin{equation}
-    \label{eq:separationAssumptionSameCurve}
-    \sup_{\abs{t-t'} > \kmaxi\pi/2 } \abs{ \gamma_{i}(t) - \gamma_{i}(t')} \geq \curvesep
-  \end{equation}
+  \begin{subequations}
+    \begin{equation}
+      \label{eq:separationAssumption}
+      \sup_{t,t'} \abs{ \gamma_{i}(t) - \gamma_{j}(t')} \geq \curvesep \textrm{~for~} i \neq j
+    \end{equation}
+    We also assume different areas of the same curve are separated
+    from each other:
+    \begin{equation}
+      \label{eq:separationAssumptionSameCurve}
+      \sup_{\abs{t-t'} > \kmaxi\pi/2 } \abs{ \gamma_{i}(t) - \gamma_{i}(t')} \geq \curvesep
+    \end{equation}
+  \end{subequations}
   (assuming the curve $\gamma_{i}(t)$ proceeds with unit speed).
 \end{assumption}
 
