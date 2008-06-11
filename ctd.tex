@@ -48,6 +48,7 @@
 \newcommand{\vx}[0]{{\vec{x}}}
 \newcommand{\vp}[0]{{\vec{p}}}
 \newcommand{\vq}[0]{{\vec{q}}}
+\newcommand{\vr}[0]{{\vec{r}}}
 \newcommand{\vm}[0]{{\vec{m}}}
 \newcommand{\vv}[0]{{\vec{v}}}
 
@@ -150,7 +151,6 @@ This assumption makes sure the curves do not come too close together for us to d
 \label{fig:separationBetweenCurves}
 \end{figure}
 
-
 \section{Geometry}
 \subsection{Definition and notations}
 Before we begin, we define some notation which we will use.
@@ -171,11 +171,9 @@ Before we begin, we define some notation which we will use.
 
 As is normal for most interpolation theorems, we need an assumption on the variation of the curve, in this case the curvature.
 
-\subsection{Local results}
+\subsection{The Algorithm}
 
-We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polyganlization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$.
-
-The following basic result will be used widely in this paper, and illustrates the benefits derived from tangential information.
+We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polygonalization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$. Before we explain the algorithm that calculates the polygonalization, we prove a basic lemma which forms the foundation of our method.
 \begin{lemma}
   \label{lem:forbiddenZone}
   For every $i \neq j$, if $\vp_{j} \in \ball{\kmaxi}{\vp_{i} \pm \vm_{i}^{\perp} \kmaxi}$, then $(\vp_{i},\vp_{j})$ is not an edge in $\poly$.
@@ -219,6 +217,51 @@ This shows that the extra information the tangents provides us can be used to ex
   That is, $\allowed{\epsilon}{\vp}$ is the ball of radius $\epsilon$ about $p$ excluding the forbidden zone.  We call this the \emph{allowed zone} or \emph{allowed region}.
 \end{definition}
 Any edge in the polygonalization starting at $\vp$, with length shorter than $\epsilon$, must connect to another point $\vp' \in \allowed{\epsilon}{p}$.
+
+We are now ready to describe the polygonalization algorithm.
+
+\begin{algo}
+  \label{algo:propagation}
+  {\bf Polygonalization Algorithm }
+
+  { \bf Input: }
+
+  \begin{itemize}
+  \item The maximal curvature, $\kmax$.
+  \item A parameter $\epsilon$ satisfying $\epsilon \kmax < 2^{-1/2}$ and $2 \kmax \epsilon^{2} < \curvesep$.
+  \item The data $\pointData$ and $\tanData$. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
+  \end{itemize}
+
+
+  {\bf Algorithm: }
+
+  \begin{enumerate}
+  \item Compute the graph $G = (\pointData, E)$ with edge set:
+    \begin{equation*}
+      E = \{ (\vp_{i},\vp_{j}) : \vp_{i} \in \allowed{\epsilon}{\vp_{j}} \textrm{~and~} \vp_{i} \in \allowed{\epsilon}{\vp_{j}}\}
+    \end{equation*}
+  \item For each vertex $\vp_{i} \in \pointData$:
+    \begin{enumerate}[a.]
+    \item Compute the set of vertices
+      \begin{equation*}
+        R^{\pm}_{i} = \{ \vp_{j} : (\vp_{i}, \vp_{j}) \in E \textrm{~and~} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i} > 0 \}
+      \end{equation*}
+    \item Find the nearest tangential neighbors, i.e.
+      \begin{equation*}
+        \vr^{\pm}_{i} = \textrm{argmin}_{\vq \in R^{\pm}_{i}} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i}
+      \end{equation*}
+    \end{enumerate}
+  \item Output the graph $\Gamma = ( \pointData, E')$ with
+    \begin{equation*}
+      E' = \{ (\vp_{i}, \vr^{+}_{i}) \} \cup \{ (\vp_{i}, \vr^{-}_{i}) \}
+    \end{equation*}
+    This graph is the polygonalization of $\curveSet$.
+  \end{enumerate}
+
+\end{algo}
+
+
+\subsection{Proofs}
 
 \begin{lemma}
   \label{lem:separationAllowedRegions}
