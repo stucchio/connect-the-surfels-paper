@@ -376,6 +376,16 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 
 Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:polygonalization}, is the polygonalization of $\curveSet$.
 
+\section{Filtering spurious points}
+
+The method provided here is relatively robust with regard to the addition of spurious random data points. This is because spurious data points are highly unlikely to be connected to any other points in the polygonalization graph.
+
+This occurs for two primary reasons. First, for an incorrect data point to be connected to part of the polygonalization at all, it would need to be located in $\allowed{\epsilon}{\vp}$ for some $\vp$. This is a region of length $O(\epsilon)$ and width $O(\epsilon^{2})$. There are approximately $L = \sum_{j} \textrm{arclength}(\gamma_{j})$ such points, for a total volume of $\epsilon^{2} L$. Thus, the probability that a spurious point is in \emph{some} allowed region is roughly $O(L \epsilon^{2})$.
+
+The second reason is that even if a spurious point is in some allowed region, it is unlikely to point in the correct direction. If an erroneous point $\vq$ is inside $\allowed{\epsilon}{\vp}$, it is still not likely that $\vp \in \allowed{\epsilon}{\vq}$; this follows because the tangent at $\vq$ must point in the direction of $\vp$ (with error proportional to $\epsilon^{2}$, the angular width of $\allowed{\epsilon}{\vq}$). Thus, the probability that the tangent at $\vq$ points towards $\vp$ is $O(\epsilon^{2}/2\pi)$.
+
+Based on these arguments, the probability that any \emph{randomly chosen} spurious point $\vq$ is connected to any other point in the polygonalization is $O(L \epsilon^{4})$.
+
 \bibliography{../stucchio}
 \bibliographystyle{hplain}
 
