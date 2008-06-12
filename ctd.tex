@@ -248,7 +248,7 @@ We are now ready to describe the polygonalization algorithm.
       \end{equation*}
     \item Find the nearest tangential neighbors, i.e.
       \begin{equation*}
-        \vr^{\pm}_{i} = \textrm{argmin}_{\vq \in R^{\pm}_{i}} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i}
+        \vr^{\pm}_{i} = \textrm{argmin}_{\vq \in R^{\pm}_{i}} d_{\vm_{i}}(\vq, \vp_{i})
       \end{equation*}
     \end{enumerate}
   \item Output the graph $\Gamma = ( \pointData, E')$ with
