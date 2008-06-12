@@ -376,6 +376,16 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 
 Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:polygonalization}, is the polygonalization of $\curveSet$.
 
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{example1.eps}
+
+\caption{Some unordered points/tangents, and the curves reconstructed from them. In this case, $\epsilon=0.065$, $\kmax=3$ and $\delta=0.015$.}
+\label{fig:basicExample}
+\end{figure}
+
 \section{Filtering spurious points}
 
 The method provided here is relatively robust with regard to the addition of spurious random data points. This is because spurious data points are highly unlikely to be connected to any other points in the polygonalization graph.
