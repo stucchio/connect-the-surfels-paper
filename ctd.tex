@@ -396,6 +396,88 @@ The second reason is that even if a spurious point is in some allowed region, it
 
 Based on these arguments, the probability that any \emph{randomly chosen} spurious point $\vq$ is connected to any other point in the polygonalization is $O(L \epsilon^{4})$.
 
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{noisy_example.eps}
+
+\caption{The same example as in Figure \ref{fig:basicExample}, but with 100 additional points (for a total of $196$), placed randomly. }
+\label{fig:noisyExample}
+\end{figure}
+
+\subsection{Noise Removal by Connecting the Dots}
+
+The aforementioned criteria suggest that our ``connect the dots'' algorithm has excellent potential for noise removal. It suggests that if we remove points which do not have edges pointing towards other edges, then with high probability we are removing spurious edges.
+
+In fact, this is born out in practice. By running Algorithm \ref{algo:polygonalization} on a figure consisting of $96$ true points, and $100$ randomly placed incorrect points, a nearly correct polygonalization is calculated; this is shown in Figure \ref{fig:noisyExample}. The original curve is reconstructed with an error at only one point (the top left corner of the red line).
+
+Of course, if enough incorrect points are present, eventually some points will be connected by Algorithm \ref{algo:polygonalization}. This can be seen in Figure \ref{fig:noisyExample}: the black line near $(0.9, -0.2)$ is an edge between two incorrect points. However, spurious edge formations such as this are small in number, and do not usually look like part of the figure.
+
+One hint that an edge is incorrect is if it points to a leaf. That is, consider a set of vertices $\vp_{0}, \vp_{1}, \ldots, \vp_{n}$ as well as $\vq$. Suppose, after approximately computing the polygonalization, one finds that the graph contains edges $e_{0} = (\vp_{0}, \vp_{1}), e_{1} = (\vp_{1}, \vp_{2}), \ldots, e_{n-1} = (\vp_{n-1}, \vp_{n})$ and $e_{n} = (\vp_{n/2}, \vq)$. The vertex $\vq$ is a leaf, i.e. it is reachable by only one edge. A polygonalization should not have leaves, suggesting that the edge $e_{n}$ should not be present. This suggests that by filtering leaves, we can remove primarily noise while leaving the signal undamaged.
+
+An additional problem with noisy data is that sometimes, an incorrect point will be present, in the allowed region of a legitimate point, and closer to the legitimate point than the adjacent points along the curve. This will prevent the correct edge from being added. This can be remedied by adding not only $\vr_{i}^{\pm}$ at Step 3 of the algorithm, but also points for which $d_{\vm^{\perp}}(\vp_{i})$who's distance to $\vp_{i}$ is not much longer than the distance between $\vp_{i}$ and $\vr_{i}^{\pm}$. With some luck, this procedure combined with filtering out leaves will approximately reconstruct the correct figure.
+
+Thus, we arrive at are noisy polygonalization algorithm.
+
+\begin{algo}
+  \label{algo:noisyPolygonalization}
+  {\bf Polygonalization Algorithm with Noise Removal }
+
+  { \bf Input: }
+
+  \begin{itemize}
+  \item The maximal curvature, $\kmax$.
+  \item A parameter $\epsilon$ satisfying $\epsilon \kmax < 2^{-1/2}$ and $2 \kmax \epsilon^{2} < \curvesep$.
+  \item The data $\pointData$ and $\tanData$, which include spurious data. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
+  \item A leaf removal count, $l \in \mathbb{Z}^{+}$.
+  \item A threshold $\alpha \geq 1$.
+  \end{itemize}
+
+
+  {\bf Algorithm: }
+
+  \begin{enumerate}
+  \item Compute the graph $G = (\pointData, E)$ with edge set:
+    \begin{equation*}
+      E = \{ (\vp_{i},\vp_{j}) : \vp_{i} \in \allowed{\epsilon}{\vp_{j}} \textrm{~and~} \vp_{i} \in \allowed{\epsilon}{\vp_{j}}\}
+    \end{equation*}
+  \item For each vertex $\vp_{i} \in \pointData$:
+    \begin{enumerate}[a.]
+    \item Compute the set of vertices
+      \begin{equation*}
+        R^{\pm}_{i} = \{ \vp_{j} : (\vp_{i}, \vp_{j}) \in E \textrm{~and~} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i} > 0 \}
+      \end{equation*}
+    \item Find the nearest tangential neighbors, i.e.
+      \begin{equation*}
+        \vr^{\pm}_{i} = \textrm{argmin}_{\vq \in R^{\pm}_{i}} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i}
+      \end{equation*}
+    \item Find the set of almost-nearest tangential neighbors:
+      \begin{equation*}
+        \mathbf{R}^{\pm}_{i} = \{ \vr \in R^{\pm}_{i} : d_{\vm_{i}}(\vp_{i}, \vr) \leq \alpha \vr^{\pm}_{i} \}
+      \end{equation*}
+    \end{enumerate}
+  \item Compute the graph $\Gamma = ( \pointData, E')$ with
+    \begin{equation*}
+      E' = \bigcup_{i} \{ (\vp_{i}, \vr) : \vr \in \mathbf{R}^{+}_{i} \} \cup \{ (\vp_{i}, \vr) : \vr \in \mathbf{R}^{-}_{i} \}
+    \end{equation*}
+  \item Search through $\Gamma$ for leaves, and remove edges pointing to the leaves. Repeat this $l$ times.
+  \item Output $\Gamma$.
+  \end{enumerate}
+\end{algo}
+
+In practice, we have found $\alpha=1.1$ and $l=4$ work reasonably well. Figure \ref{fig:moreNoisyExample} illustrates the result of Algorithm \ref{algo:noisyPolygonalization}, both with and without filtering.
+
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{more_noisy_example.eps}
+
+\caption{The same example as in Figure \ref{fig:basicExample}, but with 2000 additional random points added (for a total of 2096). The original curve is no longer completely reconstructed, but the general shape is still roughly visible, along with many more spurious points. Filtering leaves with $l=4$ improves the situation considerably.}
+\label{fig:moreNoisyExample}
+\end{figure}
+
 \bibliography{../stucchio}
 \bibliographystyle{hplain}
 
