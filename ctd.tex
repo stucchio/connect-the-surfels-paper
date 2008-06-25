@@ -180,7 +180,7 @@ As is normal for most interpolation theorems, we need an assumption on the varia
 We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polygonalization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$. Before we explain the algorithm that calculates the polygonalization, we prove a basic lemma which forms the foundation of our method.
 \begin{lemma}
   \label{lem:forbiddenZone}
-  For every $i \neq j$, if $\vp_{j} \in \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi}$, then $(\vp_{i},\vp_{j})$ is not an edge in $\poly$.
+  For every $i \neq j$, if $\vp_{j} \in \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi}$, then $(\vp_{i},\vp_{j})$ is not an edge in $\poly$. Here, $\ball{r}{\vp}$ is the ball of radius $r$ about $\vp$.
 
   We refer to the set $\cup_{\pm} \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi}$ as the \emph{forbidden zone}; this region is illustrated in Fig. \ref{fig:forbiddenZone}.
 \end{lemma}
