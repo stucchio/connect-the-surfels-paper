@@ -242,7 +242,7 @@ We are now ready to describe the polygonalization algorithm.
   \begin{enumerate}
   \item Compute the graph $G = (\pointData, E)$ with edge set:
     \begin{equation*}
-      E = \{ (\vp_{i},\vp_{j}) : \vp_{i} \in \allowed{\epsilon}{\vp_{j}} \textrm{~and~} \vp_{i} \in \allowed{\epsilon}{\vp_{j}}\}
+      E = \{ (\vp_{i},\vp_{j}) : \vp_{i} \in \allowed{\epsilon}{\vp_{j}} \textrm{~and~} \vp_{j} \in \allowed{\epsilon}{\vp_{i}}\}
     \end{equation*}
   \item For each vertex $\vp_{i} \in \pointData$:
     \begin{enumerate}[a.]
