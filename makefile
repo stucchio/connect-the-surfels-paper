@@ -14,7 +14,7 @@ ctd.dvi: ctd.tex figures
 	latex ctd.tex
 	latex ctd.tex
 
-figures: forbidden_zone.eps polygonalization_example.eps tangents_good_for.eps assumption_two.eps
+figures: forbidden_zone.eps polygonalization_example.eps tangents_good_for.eps assumption_two.eps example1.eps noisy_example.eps more_noisy_example.eps
 
 forbidden_zone.eps: forbidden_zone.py
 	python forbidden_zone.py
