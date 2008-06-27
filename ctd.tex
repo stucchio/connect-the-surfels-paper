@@ -50,6 +50,7 @@
 \newcommand{\vq}[0]{{\vec{q}}}
 \newcommand{\vr}[0]{{\vec{r}}}
 \newcommand{\vm}[0]{{\vec{m}}}
+\newcommand{\vmb}[0]{{\vec{\mathbf{m}}}}
 \newcommand{\vv}[0]{{\vec{v}}}
 
 \newcommand{\oneto}[1]{{1 \ldots #1}}
@@ -287,6 +288,10 @@ We also have the following result, which guarantees the correctness of Algorithm
 
 We prove this shortly.
 
+\begin{remark}
+  As presented, the complexity of Algorithm \ref{algo:polygonalization} is $O(N^{2})$, due to both step 1 and step 2. (Step 2 can be slow if $O(N)$ points are within the allowed region of some particular point). The complexity can be reduced to $O(N \log N)$; this is discussed in Appendix \ref{sec:quadTreeSection}.
+\end{remark}
+
 \subsection{Proof of Theorem \ref{thm:proofOfAlgo}}
 
 \begin{lemma}
@@ -349,7 +354,7 @@ We now show that $G$ is a superset of the polygonalization.
 We have now shown that $G$ separates distinct curves, and that $G$ contains the polygonalization of $\curveSet$. It remains to show that $\Gamma$ is the polygonalization.
 
 \begin{lemma}
-  \label{eq:closestTangentPointInAllowedRegionIsCorrect}
+  \label{lem:closestTangentPointInAllowedRegionIsCorrect}
   Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
 
   Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
@@ -483,6 +488,17 @@ In practice, we have found $\alpha=1.1$ and $l=4$ work reasonably well. Figure \
 \caption{The same example as in Figure \ref{fig:basicExample}, but with 2000 additional random points added (for a total of 2096). The original curve is no longer completely reconstructed, but the general shape is still roughly visible, along with many more spurious points. Filtering leaves with $l=4$ improves the situation considerably.}
 \label{fig:moreNoisyExample}
 \end{figure}
+
+\appendix
+
+\section{Speeding it up: an $O(N \log N)$ algorithm}
+\label{sec:quadTreeSection}
+
+As remarked earlier, Algorithm \ref{algo:polygonalization} runs in $O(N^{2})$ time as written. This can be remedied by using a spatially adaptive data structure. We propose the following data structure, which encapsulates naturally the geometry of our algorithm. We store the point/tangent pairs, $(\vp_{i},\vm_{i})$ in a quad-tree (sorted by $\vp_{i}$) which extends down to the scale $\min\{ \curvesep / 4, \curvemaxi / \sqrt{2} \}$. Making this scale smaller than $\delta$ is done to ensure that leaves can intersect only a single curve $\gamma$ in the figure $\curveSet$.
+
+If a node of the tree at this scale has multiple points, we store them in a list which is sorted in the following way. We select a point at random on this node, call it $(\vp_{0},\vm_{0})$. The list is sorted according to the function $\vp_{i} \mapsto (\vp_{i} - \vp_{0}) \cdot \vm_{0}$. By our choice of the leaf size, only points coming from a single curve $\gamma \in \curveSet$ are contained in this node. Now, recalling the argument used in the proof of Lemma \ref{lem:closestTangentPointInAllowedRegionIsCorrect}, we find that near $\vp_{0}$, $\gamma(t)$ admits a parameterization of the form $\gamma(t)=\vp_{0} + \vm_{0} t + f(t) \vm_{0}^{\perp}$. This implies that sorting according to the function $(\vp_{i} - \vp_{0}) \cdot \vm_{0}$ will sort points according to their position on the curve $\gamma(t)$. We chose for the scale of leaf nodes to be smaller than $\curvemaxi / \sqrt{2}$ in order for this local parameterization to be valid.
+
+//EXPLAIN HOW TO USE DATA STRUCTURE TO SPEED UP ALGORITHM//
 
 \bibliography{../stucchio}
 \bibliographystyle{hplain}
