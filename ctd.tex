@@ -399,6 +399,24 @@ Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:
 \label{fig:basicExample}
 \end{figure}
 
+\subsection{Hiding behind tree branches}
+
+//SOUHEIL MENTIONED THIS EXAMPLE. REFERENCES?//
+
+Anyone who has played the game ``Hide and Seek'' knows that playing the role of seeker is more difficult in the summer than in the fall. This is because in the summer, trees have full foliage, which can obscure the view of individuals hiding amoungst their branches. In the fall, this strategy no longer works, since trees lose their leaves.
+
+As a toy example, we constructed a figure, and obscured it by placing it behind a sequence of lines. Algorithm \ref{algo:polygonalization} succesfully reconstructs the figure (the red oval in Figure \ref{fig:obscuredExample}), as well as properly connecting points coming from the horizontal and vertical ``branches''.
+
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{obscured_figure.eps}
+
+\caption{A figure which is partially obscured.}
+\label{fig:obscuredExample}
+\end{figure}
+
 \section{Filtering spurious points}
 
 The method provided here is relatively robust with regard to the addition of spurious random data points. This is because spurious data points are highly unlikely to be connected to any other points in the polygonalization graph.
