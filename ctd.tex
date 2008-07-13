@@ -404,9 +404,9 @@ Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:
 
 //SOUHEIL MENTIONED THIS EXAMPLE. REFERENCES?//
 
-Anyone who has played the game ``Hide and Seek'' knows that playing the role of seeker is more difficult in the summer than in the fall. This is because in the summer, trees have full foliage, which can obscure the view of individuals hiding amoungst their branches. In the fall, this strategy no longer works, since trees lose their leaves.
+Anyone who has played the game ``Hide and Seek'' knows that playing the role of seeker is more difficult in the summer than in the fall. This is because in the summer, trees have full foliage, which can completely block view of the hider. In the fall, this strategy no longer works, since trees lose their leaves. However, if the seeker is a robot, the strategy may still work; the bare branches can make it difficult to recognize the hider.
 
-As a toy example, we constructed a figure, and obscured it by placing it behind a sequence of lines. Algorithm \ref{algo:polygonalization} succesfully reconstructs the figure (the red oval in Figure \ref{fig:obscuredExample}), as well as properly connecting points coming from the horizontal and vertical ``branches''.
+As a model of this problem\footnote{In particular, we are attempting to model the image after applying directional edge detectors to it, thus resulting in a set of points and tangents.}, we constructed a figure, and obscured it by placing it behind a sequence of lines. Algorithm \ref{algo:polygonalization} succesfully reconstructs the figure (the red oval), as well as properly connecting points on the horizontal and vertical ``branches''. The result is shown in Figure \ref{fig:obscuredExample}. Note that the branches are not connected to the oval (or each other).
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -414,7 +414,7 @@ As a toy example, we constructed a figure, and obscured it by placing it behind 
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{obscured_figure.eps}
 
-\caption{A figure which is partially obscured.}
+\caption{A figure which is partially obscured. Algorithm \ref{algo:polygonalization} correctly computes it's polygonalization, and distinguishes it from the curves in front of it.}
 \label{fig:obscuredExample}
 \end{figure}
 
