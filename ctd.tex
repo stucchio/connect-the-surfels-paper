@@ -72,6 +72,11 @@
 
 \newcommand{\curvesep}{{\delta}}
 
+\newcommand{\pointNoise}{{\zeta}}
+\newcommand{\tanNoise}{{\xi}}
+
+\newcommand{\nallowed}[2]{ { A^{\pointNoise, \tanNoise}_{#1}(#2) } }
+
 \begin{document}
 
 \title{Reconstructing Curves from Points and Tangents}
@@ -417,6 +422,34 @@ As a model of this problem\footnote{In particular, we are attempting to model th
 \caption{A figure which is partially obscured. Algorithm \ref{algo:polygonalization} correctly computes it's polygonalization, and distinguishes it from the curves in front of it. To avoid visual clutter, the tangents are not displayed in this figure.}
 \label{fig:obscuredExample}
 \end{figure}
+
+\section{Noisy Data}
+
+In real life, one rarely has perfect data. For this reason, it is important to consider the case of noisy data. Toward that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and tangent data perturbed by noise smaller than $\tanNoise$.
+
+Of course, the noise introduces a lower limit on the features we can resolve. Obviously, the curves must be separated by a distance at least $\pointNoise$, to prevent noise from actually moving a sample from one curve to another. More seriously, noise in the tangent data introduces uncertainty which forces us to increase the sampling rate; in particular, we require $O(\epsilon \tanNoise + \epsilon^{2}) < \curvesep$.
+
+The main idea in extending Algorithm \ref{algo:polygonalization} to the noisy case is to expand the allowed regions to encompass all possible points and tangents.
+
+\begin{definition}
+  \label{def:AllowedRegionNoisy}
+  Define the set $\nallowed{\epsilon}{\vp}$ to be:
+  \begin{equation}
+    \label{eq:allowedRegionNoisy}
+    \nallowed{\epsilon}{\vp}= \bigcup_{
+      \substack{
+        \abs{\vp'-\vp_{i}} < \pointNoise\\
+        \arccos(\vm_{i} \cdot \vm') < \tanNoise
+      }
+    }
+    \left(
+      \ball{\epsilon}{\vp'} \setminus \left[ \cup_{\pm} \ball{\curvemaxi}{\vp' \pm \vm'^{\perp} \curvemaxi} \right]
+    \right)
+  \end{equation}
+  That is, $\allowed{\epsilon}{\vp}$ is the ball of radius $\epsilon$ about $p$ excluding the forbidden zone.  We call this the \emph{noisy allowed region}.
+\end{definition}
+
+//FINISH THIS SECTION//
 
 \section{Filtering spurious points}
 
