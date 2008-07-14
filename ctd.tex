@@ -283,7 +283,8 @@ We also have the following result, which guarantees the correctness of Algorithm
   \begin{subequations}
     \label{eq:separationCondition}
     \begin{equation}
-      \delta > 2\curvemax \epsilon^{2}
+      \label{eq:constraintOnSeparationSampling}
+      \curvesep > 2\curvemax \epsilon^{2}
     \end{equation}
     where $\curvesep$ is as in Assumption \ref{ass:separation} and also
     \begin{equation}
@@ -304,7 +305,7 @@ We prove this shortly.
 
 \begin{lemma}
   \label{lem:separationAllowedRegions}
-  Let $i \neq j$ and let Assumption \ref{ass:separation} hold. Then for all $t, t'$, if \eqref{eq:separationCondition} and \eqref{eq:constraintOnkmaxEpsilon} hold, then
+  Let $i \neq j$ and let Assumption \ref{ass:separation} hold. Then for all $t, t'$, if \eqref{eq:separationCondition} holds, then
   \begin{equation}
     \label{eq:connectionsBetweenDifferentCurvesNotAllowed}
     \gamma_{j}(t')  \nin  \allowed{\epsilon}{\gamma_{i}(t)}.
