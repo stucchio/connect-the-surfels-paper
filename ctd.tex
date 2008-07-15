@@ -440,7 +440,7 @@ As a model of this problem\footnote{In particular, we are attempting to model th
 
 \section{Noisy Data}
 
-In real life, one rarely has perfect data. For this reason, it is important to consider the case of noisy data. Toward that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and tangent data perturbed by noise smaller than $\tanNoise$.
+In real life, one rarely has perfect data. For this reason, it is important to consider the case of noisy data. Toward that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and tangent data perturbed by noise smaller than $\tanNoise$ (e.g., the angle between the true tangent and the measured tangent is smaller than $\tanNoise$).
 
 Of course, the noise introduces a lower limit on the features we can resolve. Obviously, the curves must be separated by a distance at least $\pointNoise$, to prevent noise from actually moving a sample from one curve to another. More seriously, noise in the tangent data introduces uncertainty which forces us to increase the sampling rate; in particular, we require $O(\epsilon \tanNoise + \epsilon^{2}) < \curvesep$.
 
