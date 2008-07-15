@@ -363,20 +363,19 @@ We now show that $G$ is a superset of the polygonalization.
 We have now shown that $G$ separates distinct curves, and that $G$ contains the polygonalization of $\curveSet$. It remains to show that $\Gamma$ is the polygonalization.
 
 \begin{lemma}
-  \label{lem:closestTangentPointInAllowedRegionIsCorrect}
-  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
-
-  Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
+  \label{lem:localGraphParameterization}
+  A curve $\gamma_{i}(t)$ satisfying \eqref{eq:curvatureAssumption} admits the local parameterization
+  \begin{equation}
+    \label{eq:localGraphParameterization}
+    \gamma_{i}(t) = \gamma(t_{0}) + (t-t_{0})\gamma'(t_{0}) + w(t) \gamma'^{\perp}(t_{0})
+  \end{equation}
+  where $w'(t_{0})=0$. The parameterization is valid for $\abs{t-t_{0}} < \curvemaxi$.
 \end{lemma}
 
-\begin{remark}
-  The minimal edge is the edge $\vr^{+}_{0}$ as computed in Step (2b) of Algorithm \ref{algo:polygonalization}.
-\end{remark}
-
 \begin{proof}
-  Change coordinates so that $\vm_{0} = (1,0)$, and parameterize $\gamma(t)=(t,w(t))$. This parameterization is valid locally; the conclusion follows immediately if all points $\vp_{j}$ are contained in the region where this parameterization is valid.
+  Taylor's theorem shows the parameterization to be valid on an arbitrarily small ball. All we need to do is show that this parameterization is valid on a region of size $\curvemaxi$.
 
-  All we need to do is show that this parameterization is valid on a region of size $\epsilon \curvemax$. This can be done as follows. The parameterization breaks down when $w'(t)$ blows up, we need to show that this does not happen before $t=\epsilon$. Plugging this parameterization into the curvature bound \eqref{eq:curvatureAssumption} yields:
+  The parameterization breaks down when $w'(t)$ blows up, so we need to show that this does not happen before $t=\epsilon$. Plugging this parameterization into the curvature bound \eqref{eq:curvatureAssumption} yields:
   \begin{equation*}
     \frac{ \abs{w''(t)} }{(1+w'(t)^{2})^{3/2}} \leq \curvemax
   \end{equation*}
@@ -389,9 +388,24 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
   \begin{equation*}
     w'(t) \leq f^{-1}(\curvemax t)
   \end{equation*}
-  implying that $w'(t)$ is finite for $\curvemax t < 1$, or $t < \curvemaxi 1$. Thus, the parameterization is valid for $t < \curvemaxi$.
+  implying that $w'(t)$ is finite for $\curvemax t < 1$, or $t < \curvemaxi$.
+\end{proof}
 
-  Since each point $\vp_{j} \in \allowed{\epsilon}{\vp_{0}}$, and since $\epsilon < 1/\curvemax \sqrt{2}$ (by \eqref{eq:constraintOnkmaxEpsilon}), this in particular implies each point $\vp_{j}$ is in the region where $t < \curvemaxi$.
+\begin{lemma}
+  \label{lem:closestTangentPointInAllowedRegionIsCorrect}
+  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+
+  Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
+\end{lemma}
+
+\begin{remark}
+  The minimal edge is the edge $\vr^{+}_{0}$ as computed in Step (2b) of Algorithm \ref{algo:polygonalization}.
+\end{remark}
+
+\begin{proof}
+  By Lemma \ref{lem:localGraphParameterization}, the curve $\gamma(t)$ can be locally parameterized as a graph near $\vp$, i.e. \eqref{eq:localGraphParameterization}. This is valid up to a distance $\curvemaxi$; by \eqref{eq:constraintOnkmaxEpsilon}, it is valid for all points in the graph $G$ connected to $\vp$.
+
+The adjacent points on the graph are the ones for which $\abs{t-t_{0}}$ is minimal. Note that $\vm_{0} \cdot (\vp_{j} - \vp) = t$ (simply plug in \eqref{eq:localGraphParameterization}); thus, minimizing $\vm_{0} \cdot (\vp_{j} - \vp)$ selects the adjacent point on the graph.
 \end{proof}
 
 Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:polygonalization}, is the polygonalization of $\curveSet$.
