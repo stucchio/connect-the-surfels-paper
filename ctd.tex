@@ -354,6 +354,7 @@ This result shows that the graph $G$, computed in Step 1 of Algorithm \ref{algo:
 We now show that $G$ is a superset of the polygonalization.
 
 \begin{proposition}
+  \label{prop:polyIncludesNeighboringPoints}
   Suppose the point data $\pointData$ is $\epsilon$-sampled, i.e. if two points $\vp_{i}$ and $\vp_{j}$ are adjacent on the curve $\gamma_{k}$, then the \emph{arc length} between $\vp_{i}$ and $\vp_{j}$ is bounded by $\epsilon$. Then $G$ contains the polygonalization of $\curveSet$.
 \end{proposition}
 \begin{proof}
@@ -422,15 +423,26 @@ Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:
 
 \section{Noisy Data}
 
-In real life, one rarely has perfect data. For this reason, it is important to consider the case of noisy data. Toward that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and tangent data perturbed by noise smaller than $\tanNoise$ (e.g., the angle between the true tangent and the measured tangent is smaller than $\tanNoise$).
+In real life, one rarely has perfect data. For this reason, it is important to consider the case of noisy data. Toward that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and tangent data perturbed by noise smaller than $\tanNoise$.
+
+By this we mean the following; to each point $\vp_{i} \in \pointData$, there exists a point $\vp_{i}' = \gamma_{k_{i}}(t_{i})$ such that $\abs{\vp_{i}-\vp_{i}'} \leq \pointNoise$. Similarly, the unit tangent vector $\vm_{i}$ differs from the true tangent $\vm_{i}' = \gamma_{k_{i}}'(t_{i})$ by an angle at most $\tanNoise$. By a a polygonalization of the noisy data, we mean that $(\vp_{i},\vp_{j})$ is an edge in the noisy polygonalization if $(\vp_{i}',\vp_{j}')$ is an edge in the non-noisy polygonalization. In what follows, $\vp_{j}$ refers to a given (noisy) point, while $\vp_{j}'$ refers to the corresponding true point (and similarly for tangents).
 
 Of course, the noise introduces a lower limit on the features we can resolve. Obviously, the curves must be separated by a distance at least $\pointNoise$, to prevent noise from actually moving a sample from one curve to another. More seriously, noise in the tangent data introduces uncertainty which forces us to increase the sampling rate; in particular, we require $O(\epsilon \tanNoise + \epsilon^{2}) < \curvesep$.
 
-The main idea in extending Algorithm \ref{algo:polygonalization} to the noisy case is to expand the allowed regions to encompass all possible points and tangents.
+The main idea in extending Algorithm \ref{algo:polygonalization} to the noisy case is to expand the allowed regions to encompass all possible points and tangents. Of course, this imposes new constraints on the separation between curves.
+
+We also require a \emph{minimal} sampling rate in order to ensure that the order of points on the curve is not affected by noise.
+
+\begin{assumption}
+  \label{ass:minSamplingRateNoisy}
+  We assume that adjacent points $\vp_{i}$ and $\vp_{j}$ on the curve $\gamma_{k}(t)$ are separated by a distance greater than $2\pointNoise + ?$.
+\end{assumption}
+
+To extend to the noisy case, we must expand the allowed region to account for our uncertainty concerning the actual location of points.
 
 \begin{definition}
   \label{def:AllowedRegionNoisy}
-  Define the set $\nallowed{\epsilon}{\vp}$ to be:
+  Define the \emph{noisy allowed region} $\nallowed{\epsilon}{\vp}$ to be:
   \begin{equation}
     \label{eq:allowedRegionNoisy}
     \nallowed{\epsilon}{\vp}= \bigcup_{
@@ -443,8 +455,92 @@ The main idea in extending Algorithm \ref{algo:polygonalization} to the noisy ca
       \ball{\epsilon}{\vp'} \setminus \left[ \cup_{\pm} \ball{\curvemaxi}{\vp' \pm \vm'^{\perp} \curvemaxi} \right]
     \right)
   \end{equation}
-  That is, $\allowed{\epsilon}{\vp}$ is the ball of radius $\epsilon$ about $p$ excluding the forbidden zone.  We call this the \emph{noisy allowed region}.
+  That is, $\nallowed{\epsilon}{\vp}$ is the union of all the allowed regions of points/tangents near $(\vp, \vm)$.
 \end{definition}
+
+\begin{algo}
+  \label{algo:polygonalizationNoisy}
+  {\bf Noisy Polygonalization Algorithm }
+
+  { \bf Input: }
+
+  \begin{itemize}
+  \item The maximal curvature, $\curvemax$, and noise amplitudes $\pointNoise, \tanNoise$.
+  \item A parameter $\epsilon$ satisfying $\epsilon \curvemax < 2^{-1/2}$ and $2 \curvemax \epsilon^{2} < \curvesep$. //FIX THIS
+  \item The data $\pointData$ and $\tanData$. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
+  \end{itemize}
+
+
+  {\bf Algorithm: }
+
+  \begin{enumerate}
+  \item Compute the graph $G = (\pointData, E)$ with edge set:
+    \begin{equation}
+      \label{eq:noisyConditionForCheckingIfEdgeConnectionIsPlausible}
+      E = \{ (\vp_{i},\vp_{j}) : \ball{\pointNoise}{\vp_{i}} \cap \nallowed{\epsilon}{\vp_{j}} \neq \emptyset  \textrm{~and~} \ball{\pointNoise}{\vp_{j}} \cap \nallowed{\epsilon}{\vp_{i}} \neq \emptyset \}
+    \end{equation}
+  \item For each vertex $\vp_{i} \in \pointData$:
+    \begin{enumerate}[a.]
+    \item Compute the set of vertices
+      \begin{equation*}
+        R^{\pm}_{i} = \{ \vp_{j} : (\vp_{i}, \vp_{j}) \in E \textrm{~and~} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i} > 0 \}
+      \end{equation*}
+    \item Find the nearest tangential neighbors, i.e.
+      \begin{equation*}
+        \vr^{\pm}_{i} = \textrm{argmin}_{\vq \in R^{\pm}_{i}} d_{\vm_{i}}(\vq, \vp_{i})
+      \end{equation*}
+    \end{enumerate}
+  \item Output the graph $\Gamma = ( \pointData, E')$ with
+    \begin{equation*}
+      E' = \{ (\vp_{i}, \vr^{+}_{i}) \} \cup \{ (\vp_{i}, \vr^{-}_{i}) \}
+    \end{equation*}
+    This graph is the polygonalization of $\curveSet$.
+  \end{enumerate}
+
+\end{algo}
+
+
+The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, and shows that the noisy allowed region contains nearby points on the polygonalization.
+
+//NEED CALCULATIONS SHOWING NECESSARY DISTANCE BETWEEN CURVES, ANALGOUS TO LEMMA \ref{lem:separationAllowedRegions}//
+
+\begin{proposition}
+  Suppose the figure is sampled at a rate satisfying \eqref{eq:constraintOnkmaxEpsilon}. Then $G$ contains the polygonalization of the figure.
+\end{proposition}
+
+\begin{proof}
+  The point $\vp_{i}$ and tangent $\vm_{i}$ are close to some point $\vp_{i}', \vm_{i}'$ on the figure $\curveSet$; in particular, $\abs{\vp_{i} - \vp_{i}'} \leq \pointNoise$ and $\arccos(\vm_{i} \cdot \vm_{i}') < \tanNoise$ . Similarly, there is a point $\vp_{j}'$ on the figure a distance no more than $\pointNoise$ away from $\vp_{j}$. By Proposition \ref{prop:polyIncludesNeighboringPoints}, $\vp_{j}' \in \allowed{\epsilon}{\vp_{i}'}$. Since $\vp_{j}' \in \ball{\pointNoise}{\vp_{j}}$ and $\vp_{j}' \in \allowed{\epsilon}{\vp_{i}'} \subset \nallowed{\epsilon}{\vp_{i}}$, we find that $\vp_{j}' \in \ball{\pointNoise}{\vp_{j}} \cap \nallowed{\epsilon}{\vp_{i}} \neq \emptyset$. Repeating this argument with $i$ and $j$ interchanged shows that \eqref{eq:noisyConditionForCheckingIfEdgeConnectionIsPlausible} holds, and $(\vp_{i}, \vp_{j})$ is an edge of $G$.
+\end{proof}
+
+\begin{proposition}
+  \label{lem:noisyClosestTangentPointInAllowedRegionIsCorrect}
+  Fix a point $\vp_{i}=\vp \in \pointData$, and suppose that Assumption \ref{ass:minSamplingRateNoisy} holds. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+
+  Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
+\end{proposition}
+
+\begin{proof}
+  The idea of the proof follows that of Lemma \ref{lem:closestTangentPointInAllowedRegionIsCorrect} closely, but we must adjust for our uncertainty as to the point and tangent.
+
+  The curve itself has the parameterization $\gamma(t) = \vp' + \vm' t + \vm'^{\perp} w(t)$, by Lemma \ref{lem:localGraphParameterization}, and this is valid for $\abs{t} < \curvemaxi$. However, we do not know $\vp'$ and $\vm'$, only $\vp$ and $\vm$. We wish to find the point $\vp_{j}$ for which $\vm' \cdot (\vp_{j}' - \vp')$ is minimal.
+
+  Note that:
+  \begin{multline*}
+    \vm \cdot (\vp - \vp_{j}) = \vm \cdot (\vp' - \vp_{j}') + \vm \cdot ([\vp - \vp'] - [\vp_{j} - \vp_{j}']) \\
+    = \vm' \cdot (\vp' - \vp_{j}') + (\vm - \vm') \cdot (\vp' - \vp_{j}')  + \vm \cdot ([\vp - \vp'] - [\vp_{j} - \vp_{j}'])
+  \end{multline*}
+  Or:
+  \begin{multline*}
+    \abs{
+      \vm \cdot (\vp - \vp_{j}) - \vm' \cdot (\vp' - \vp_{j}')
+      } \\
+      \leq \abs{(\vm - \vm') \cdot (\vp' - \vp_{j}')}  + \abs{ \vm \cdot ([\vp - \vp'] - [\vp_{j} - \vp_{j}']) } \\
+      \leq \sqrt{\sin^{2}(\tanNoise) + (1-\cos(\tanNoise) )^{2}}\abs{\vp' - \vp_{j}'} + 2 \pointNoise \leq 2 \tanNoise \abs{\vp' - \vp_{j}'} + 2\pointNoise
+  \end{multline*}
+//FINISH THIS UP, MIN SAMPLING MEANS DISTANCE BETWEEN $\vp_{j}$ and $\vp_{k}$
+
+\end{proof}
+
 
 //FINISH THIS SECTION//
 
