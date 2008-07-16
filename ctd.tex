@@ -420,14 +420,6 @@ Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:
 \label{fig:basicExample}
 \end{figure}
 
-\subsection{Hiding behind tree branches}
-
-//SOUHEIL MENTIONED THIS EXAMPLE. REFERENCES?//
-
-Anyone who has played the game ``Hide and Seek'' knows that playing the role of seeker is more difficult in the summer than in the fall. This is because in the summer, trees have full foliage, which can completely block view of the hider. In the fall, this strategy no longer works, since trees lose their leaves. However, if the seeker is a robot, the strategy may still work; the bare branches can make it difficult to recognize the hider.
-
-As a model of this problem\footnote{In particular, we are attempting to model the image after applying directional edge detectors to it, thus resulting in a set of points and tangents.}, we constructed a figure, and obscured it by placing it behind a sequence of lines. Algorithm \ref{algo:polygonalization} succesfully reconstructs the figure (the red oval), as well as properly connecting points on the horizontal and vertical ``branches''. The result is shown in Figure \ref{fig:obscuredExample}. Note that the branches are not connected to the oval (or each other).
-
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
@@ -466,7 +458,17 @@ The main idea in extending Algorithm \ref{algo:polygonalization} to the noisy ca
 
 //FINISH THIS SECTION//
 
-\section{Filtering spurious points}
+\section{Examples}
+
+\subsection{Hiding behind tree branches}
+
+//SOUHEIL MENTIONED THIS EXAMPLE. NEED REFERENCES.//
+
+Anyone who has played the game ``Hide and Seek'' knows that playing the role of seeker is more difficult in the summer than in the fall. This is because in the summer, trees have full foliage, which can completely block view of the hider. In the fall, this strategy no longer works, since trees lose their leaves. However, if the seeker is a robot, the strategy may still work; the bare branches can make it difficult to recognize the hider.
+
+As a model of this problem\footnote{In particular, we are attempting to model the image after applying directional edge detectors to it, thus resulting in a set of points and tangents.}, we constructed a figure, and obscured it by placing it behind a sequence of lines. Algorithm \ref{algo:polygonalization} succesfully reconstructs the figure (the red oval), as well as properly connecting points on the horizontal and vertical ``branches''. The result is shown in Figure \ref{fig:obscuredExample}. Note that the branches are not connected to the oval (or each other).
+
+\subsection{Filtering spurious points}
 
 The method provided here is relatively robust with regard to the addition of spurious random data points. This is because spurious data points are highly unlikely to be connected to any other points in the polygonalization graph.
 
@@ -486,7 +488,7 @@ Based on these arguments, the probability that any \emph{randomly chosen} spurio
 \label{fig:noisyExample}
 \end{figure}
 
-\subsection{Noise Removal by Connecting the Dots}
+\subsubsection{Noise Removal by Connecting the Dots}
 
 The aforementioned criteria suggest that our ``connect the dots'' algorithm has excellent potential for noise removal. It suggests that if we remove points which do not have edges pointing towards other edges, then with high probability we are removing spurious edges.
 
