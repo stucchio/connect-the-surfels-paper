@@ -370,7 +370,7 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
     \label{eq:localGraphParameterization}
     \gamma_{i}(t) = \gamma(t_{0}) + (t-t_{0})\gamma'(t_{0}) + w(t) \gamma'^{\perp}(t_{0})
   \end{equation}
-  where $w'(t_{0})=0$. The parameterization is valid for $\abs{t-t_{0}} < \curvemaxi$.
+  where $w'(t_{0})=0$. The parameterization is valid for $\abs{t-t_{0}} < \curvemaxi$. In particular, $w(t) < f^{-1}(\curvemax t) $ where $f(z)=z / \sqrt{1+z^{2}}$.
 \end{lemma}
 
 \begin{proof}
@@ -385,7 +385,7 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
     \label{eq:2}
     \frac{w'(t)}{\sqrt{1+w'(t)^{2}}} \leq \curvemax t
   \end{equation}
-  Define $f(z)=z/\sqrt{1+z^{2}}$, then $f^{-1}(z)$ is singular only at $z=\pm 1$, and is regular before that. Solving \eqref{eq:2} for $w'(t)$ shows that:
+  With $f(z)$ defined as in the statement, then $f^{-1}(z)$ is singular only at $z=\pm 1$, and is regular before that. Solving \eqref{eq:2} for $w'(t)$ shows that:
   \begin{equation*}
     w'(t) \leq f^{-1}(\curvemax t)
   \end{equation*}
@@ -435,7 +435,7 @@ We also require a \emph{minimal} sampling rate in order to ensure that the order
 
 \begin{assumption}
   \label{ass:minSamplingRateNoisy}
-  We assume that adjacent points $\vp_{i}$ and $\vp_{j}$ on the curve $\gamma_{k}(t)$ are separated by a distance greater than $2\pointNoise + ?$.
+  We assume that adjacent points $\vp_{i}$ and $\vp_{j}$ on the curve $\gamma_{k}(t)$ are separated by a distance greater than $[(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]$.
 \end{assumption}
 
 To extend to the noisy case, we must expand the allowed region to account for our uncertainty concerning the actual location of points.
@@ -499,10 +499,22 @@ To extend to the noisy case, we must expand the allowed region to account for ou
 
 \end{algo}
 
-
-The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, and shows that the noisy allowed region contains nearby points on the polygonalization.
+\begin{theorem}
+  \label{thm:noisyReconstruction}
+  Suppose that Assumptions \ref{ass:curvature}, \ref{ass:separation} and \ref{ass:minSamplingRateNoisy} hold. Suppose also that:
+  \begin{subequations}
+    \label{eq:noisySeparationConditions}
+    \begin{equation}
+      \label{eq:noisyConstraintOnkmaxEpsilon}
+      \epsilon < \frac{1}{ \curvemax \sqrt{2}}
+    \end{equation}
+  \end{subequations}
+  In that case, Algorithm \ref{algo:polygonalizationNoisy} correctly reconstructs the figure.
+\end{theorem}
 
 //NEED CALCULATIONS SHOWING NECESSARY DISTANCE BETWEEN CURVES, ANALGOUS TO LEMMA \ref{lem:separationAllowedRegions}//
+
+The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, and shows that the noisy allowed region contains nearby points on the polygonalization.
 
 \begin{proposition}
   Suppose the figure is sampled at a rate satisfying \eqref{eq:constraintOnkmaxEpsilon}. Then $G$ contains the polygonalization of the figure.
@@ -522,23 +534,38 @@ The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, 
 \begin{proof}
   The idea of the proof follows that of Lemma \ref{lem:closestTangentPointInAllowedRegionIsCorrect} closely, but we must adjust for our uncertainty as to the point and tangent.
 
-  The curve itself has the parameterization $\gamma(t) = \vp' + \vm' t + \vm'^{\perp} w(t)$, by Lemma \ref{lem:localGraphParameterization}, and this is valid for $\abs{t} < \curvemaxi$. However, we do not know $\vp'$ and $\vm'$, only $\vp$ and $\vm$. We wish to find the point $\vp_{j}$ for which $\vm' \cdot (\vp_{j}' - \vp')$ is minimal.
+  The curve itself has the parameterization $\gamma(t) = \vp' + \vm' t + \vm'^{\perp} w(t)$, by Lemma \ref{lem:localGraphParameterization}, and this is valid for $\abs{t} < \curvemaxi$. However, we do not know $\vp'$ and $\vm'$, only $\vp$ and $\vm$. We wish to find the point $\vp_{j}$ for which $\vm' \cdot (\vp_{j}' - \vp')$ is minimal, and we approximate this by finding the point for which $\vm \cdot (\vp_{j} - \vp)$ is minimal.
 
-  Note that:
-  \begin{multline*}
-    \vm \cdot (\vp - \vp_{j}) = \vm \cdot (\vp' - \vp_{j}') + \vm \cdot ([\vp - \vp'] - [\vp_{j} - \vp_{j}']) \\
-    = \vm' \cdot (\vp' - \vp_{j}') + (\vm - \vm') \cdot (\vp' - \vp_{j}')  + \vm \cdot ([\vp - \vp'] - [\vp_{j} - \vp_{j}'])
-  \end{multline*}
-  Or:
-  \begin{multline*}
-    \abs{
-      \vm \cdot (\vp - \vp_{j}) - \vm' \cdot (\vp' - \vp_{j}')
-      } \\
-      \leq \abs{(\vm - \vm') \cdot (\vp' - \vp_{j}')}  + \abs{ \vm \cdot ([\vp - \vp'] - [\vp_{j} - \vp_{j}']) } \\
-      \leq \sqrt{\sin^{2}(\tanNoise) + (1-\cos(\tanNoise) )^{2}}\abs{\vp' - \vp_{j}'} + 2 \pointNoise \leq 2 \tanNoise \abs{\vp' - \vp_{j}'} + 2\pointNoise
-  \end{multline*}
-//FINISH THIS UP, MIN SAMPLING MEANS DISTANCE BETWEEN $\vp_{j}$ and $\vp_{k}$
+Using the fact that $\vm \cdot (\vp_{j} - \vp) - \vm \cdot (\vp_{k} - \vp) = \vm \cdot (\vp_{j}- \vp_{k})$, we find that
+\begin{multline}
+  \label{eq:3}
+  \vm \cdot (\vp_{j} - \vp) - \vm \cdot (\vp_{k} - \vp) =
+  \vm \cdot (\vp_{j}- \vp_{k}) = \\
+  \vm \cdot (\vp_{j}' - \vp_{k}') + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}']) \\
+  = \vm' \cdot (\vp_{j}' - \vp_{k}') + (\vm - \vm') \cdot (\vp_{j}' - \vp_{k}')  + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}'])
+\end{multline}
+The second and third terms on the right side of \eqref{eq:3} are the error terms. We have the bound:
+\begin{multline*}
+  \abs{(\vm - \vm') \cdot (\vp_{j}' - \vp_{k}')  + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}'])} \\
+  \leq \sqrt{\sin^{2}(\tanNoise) + (1-\cos(\tanNoise) )^{2}} \abs{\vp_{j}' - \vp_{k}'} + 2 \pointNoise
+  \leq 2 (\tanNoise \epsilon + \pointNoise)
+\end{multline*}
+We wish to find the $j$ for which \eqref{eq:3} is negative for every $k$. If we can show that $\abs{\vm' \cdot (\vp_{j}' - \vp_{k}')} > 2(\tanNoise \epsilon + \pointNoise)$, we are done.
 
+If we observe that $\vp_{j}' = \vp' + \vm' t_{j} + w(t_{j}) \vm'^{\perp}$ (using the notation of Lemma \ref{lem:localGraphParameterization}), and similarly $\vp_{k}' = \vp' + \vm' t_{k} + w(t_{k}) \vm'^{\perp}$, we find then that $\vm' \cdot (\vp_{j}'-\vp_{k}') = t_{j}-t_{k}$.
+
+It is here we use the fact that $\abs{\vp_{j} - \vp_{k}}^{2} = (t_{j}-t_{k})^{2} + (w(t_{j})-w(t_{k}))^{2} \geq [(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]^{2}$. With $f(z)$ as in Lemma \ref{lem:localGraphParameterization}, we find that:
+\begin{multline*}
+  \abs{(w(t_{j})-w(t_{k}))} = \abs{w'(y)}\abs{(t_{j}-t_{k})} \leq \frac{1}{f'(f^{-1}(\curvemax y))} \abs{(t_{j}-t_{k})} \\
+  = (1+(f^{-1}(\curvemax y))^{2})^{3/2} \abs{(t_{j}-t_{k} )}
+\end{multline*}
+for some $y \in [0,\curvemaxi]$. If $\curvemax y < 1/\sqrt{2}$ (i.e. \eqref{eq:constraintOnkmaxEpsilon} is satisfied), then $f^{-1}(\curvemax y) < 1$ and $(1+f^{-1}(\curvemax y)^{2}) < 2$. Thus:
+\begin{multline}
+  \abs{(1+2^{3/2})(t_{j}-t_{k})}^{2} \\
+  \geq (t_{j}-t_{k})^{2} + [(1+(f^{-1}(\curvemax y))^{2})^{3/2} (t_{j}-t_{k} )]^{2} \\
+  \geq \abs{\vp_{j} - \vp_{k}}^{2}  \geq [(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]^{2}
+\end{multline}
+(the last inequality follows from Assumption \ref{ass:minSamplingRateNoisy}) implying that $\abs{t_{j}-t_{k}} \geq 2(\tanNoise \epsilon + \pointNoise)$.
 \end{proof}
 
 
