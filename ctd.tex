@@ -52,6 +52,10 @@
 \newcommand{\vm}[0]{{\vec{m}}}
 \newcommand{\vmb}[0]{{\vec{\mathbf{m}}}}
 \newcommand{\vv}[0]{{\vec{v}}}
+\newcommand{\va}[0]{{\vec{a}}}
+\newcommand{\vb}[0]{{\vec{b}}}
+\newcommand{\vg}[0]{{\vec{g}}}
+
 
 \newcommand{\oneto}[1]{{1 \ldots #1}}
 \newcommand{\onetoN}[0]{{1 \ldots N}}
@@ -332,6 +336,7 @@ The intermediate value theorem implies $\arcsin( x) \leq \arcsin'(\zeta) x=(1-\z
 \end{equation*}
 Substituting this into \eqref{eq:1} yields:
 \begin{equation}
+  \label{eq:4}
   \eqref{eq:1} \leq  2 \curvemaxi \sin^{2}( \sqrt{2} \curvemax \epsilon/2) \leq \curvemax \epsilon^{2}
 \end{equation}
 
@@ -466,7 +471,7 @@ To extend to the noisy case, we must expand the allowed region to account for ou
 
   \begin{itemize}
   \item The maximal curvature, $\curvemax$, and noise amplitudes $\pointNoise, \tanNoise$.
-  \item A parameter $\epsilon$ satisfying $\epsilon \curvemax < 2^{-1/2}$ and $2 \curvemax \epsilon^{2} < \curvesep$. //FIX THIS
+  \item A parameter $\epsilon$ satisfying $\epsilon \curvemax < 2^{-1/2}$ and $4 \pointNoise + 2 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2} < \curvesep$.
   \item The data $\pointData$ and $\tanData$. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
   \end{itemize}
 
@@ -505,6 +510,10 @@ To extend to the noisy case, we must expand the allowed region to account for ou
   \begin{subequations}
     \label{eq:noisySeparationConditions}
     \begin{equation}
+      \label{eq:noisySeparationDistance}
+      \curvesep > 3 \pointNoise + 4 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2}
+    \end{equation}
+    \begin{equation}
       \label{eq:noisyConstraintOnkmaxEpsilon}
       \epsilon < \frac{1}{ \curvemax \sqrt{2}}
     \end{equation}
@@ -512,7 +521,60 @@ To extend to the noisy case, we must expand the allowed region to account for ou
   In that case, Algorithm \ref{algo:polygonalizationNoisy} correctly reconstructs the figure.
 \end{theorem}
 
-//NEED CALCULATIONS SHOWING NECESSARY DISTANCE BETWEEN CURVES, ANALGOUS TO LEMMA \ref{lem:separationAllowedRegions}//
+\subsection{Proof of Theorem \ref{thm:noisyReconstruction}}
+
+The proof of Theorem \ref{thm:noisyReconstruction} follows that of Theorem \ref{thm:proofOfAlgo} almost exactly, with minor modifications made to account for the noise.
+
+To begin, we need to show that the noisy allowed region is large enough to separate distinct curves. It is here that we use \eqref{eq:noisySeparationDistance}.
+
+\begin{proposition}
+  Let $i \neq j$ and assume that \eqref{eq:noisySeparationConditions} holds. Then $\vp_{i} \nin \nallowed{\epsilon}{\vp_{j}}$ unless $\vp_{i}$ and $\vp_{j}$ are samples from the same curve, and are separated by an arc length no larger than $\curvemaxi \pi/2$.
+\end{proposition}
+
+\begin{proof}
+  For simplicity, suppose that $\vp_{i} \in \ball{\epsilon}{\vp_{j}}$ (since otherwise, $\vp_{i} \nin \nallowed{\epsilon}{\vp_{j}}$, but $\vp_{i}$ is not sampled from the same curve as $\vp_{j}$. Let $\gamma(t)$ denote the curve from which $\vp_{j}$ is sampled. Let $\vp = \vp_{j}$ and $\vm = \vm_{j}$ to simplify notation.
+
+  Select points $\vp'', \vm''$ to minimize $d(\vp_{i},L'')$, $L''=\vp''+\vm''$, with the constraint that $d(\vp'',\vp) < \pointNoise$ and the angle between $\vm''$ and $\vm$ is smaller than $\tanNoise$. Let $\va \in L''$ be the point for which $d(\va,\vp_{i}) = d(\vp_{i},L'')$.
+
+  It is shown in the proof of Lemma \ref{lem:separationAllowedRegions} that if $d(\vp_{i}, L'') > \curvemax \epsilon^{2}$, then $\vp_{i} \nin \allowed{\epsilon}{\vp''}$ (recall \eqref{eq:1}, \eqref{eq:4}). Thus, if $d(\vp_{i},L'') > \curvemax \epsilon^{2}$ for any $\vp'', \vm''$, then $\vp_{i} \nin \allowed{\epsilon}{\vp''}$ and hence $\vp_{i} \nin \nallowed{\epsilon}{\vp}$. We will show this to be the case.
+
+%  Let $L=\vp + \vm t$, $t \in [-\epsilon,\epsilon]$ (with $\vp$ and $\vm$ the given data), and let $L'=\vp'+\vm t$ (with $\vp'$ and $\vm'$ the true samples of the curve $\gamma(t)$.
+
+  By the second triangle inequality, we have the bound:
+  \begin{multline}
+    \label{eq:7}
+    d(\vp_{i},L'') = d(\vp_{i},\va) \geq d(\vp_{i}',\va) - d(\vp_{i}, \vp_{i}')\\
+    \geq d(\vp_{i}', \vb) - d(\vb,\va) - d(\vp_{i}, \vp_{i}')
+    \geq \curvesep - d(\vb,\va) - \pointNoise
+  \end{multline}
+  where $\vb$ is the point on $\gamma(t)$ closest to $\vp_{i}'$. Once we show this is greater than $\curvemax \epsilon^{2}$, the proof is complete.
+
+Let $L'=\vp' + \vm' t$ (with $\vp'$ and $\vm'$ being true samples of $\gamma(t)$, approximated by $\vp$ and $vm$). Then we have the bound:
+  \begin{equation}
+    \label{eq:6}
+    d(\vb,\va) \leq \sup_{\vg \in L'} d(\vb,\vg) + d(\vg, \va) \leq d(\vb,L') + d(\va,L') \leq \curvemax \epsilon^{2} + d(\va,L')
+  \end{equation}
+  The bound on $d(\vb, \vg)$ follows since $\vb$ is a sample from $\gamma(t)$ (recalling \eqref{eq:1}, \eqref{eq:4}).
+
+  Since $\va=\vp'' + \vm'' s$ (for some $s \in [-\epsilon,\epsilon]$), we can perform the bound:
+  \begin{multline}
+    \label{eq:5}
+    d(\va,L') = \sup_{\abs{t} \leq \epsilon} d(\va, \vp' + \vm' t) \leq \sup_{\abs{s} \leq \epsilon} \sup_{ \abs{t} \leq \epsilon} d(\vp'' + \vm'' s, \vp' + \vm' t) \\
+    \leq d(\vp'' + m'' \epsilon, \vp' + \vm' \epsilon) \leq 2 \pointNoise + 4 \tanNoise \epsilon
+  \end{multline}
+  In \eqref{eq:5}, we assume $m'$ and $m''$ are oriented the same way. It is easy enough to see that the sup is achieved at the endpoints; we then use the triangle inequality $d(\vp'', vp') < d(\vp'', \vp) + d(\vp, \vp') \leq 2 \pointNoise$, and similarly for the tangents.
+  Thus, we find that:
+  \begin{equation}
+    \eqref{eq:6} \leq \curvemax \epsilon^{2} + 2 \pointNoise + 4 \epsilon \tanNoise
+  \end{equation}
+  Plugging this into \eqref{eq:7} shows that:
+  \begin{equation}
+    d(\vp_{i},L'') \geq \curvesep - (3 \pointNoise + 4 \epsilon \tanNoise + \curvemax \epsilon^{2}) \geq 1.1 \curvemax \epsilon^{2} > \curvemax \epsilon^{2}
+  \end{equation}
+  where the last inequality follows from \eqref{eq:noisySeparationDistance}.
+\end{proof}
+
+This shows that the graph $G$ computed in Step 1 separates distinct curves.
 
 The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, and shows that the noisy allowed region contains nearby points on the polygonalization.
 
@@ -526,9 +588,9 @@ The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, 
 
 \begin{proposition}
   \label{lem:noisyClosestTangentPointInAllowedRegionIsCorrect}
-  Fix a point $\vp_{i}=\vp \in \pointData$, and suppose that Assumption \ref{ass:minSamplingRateNoisy} holds. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+  Fix a point $\vp_{i}=\vp \in \pointData$, and suppose that Assumption \ref{ass:minSamplingRateNoisy} holds. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ (as per Step 1 of Algorithm \ref{algo:polygonalizationNoisy}) and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:noisyConstraintOnkmaxEpsilon}.
 
-  Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
+  Then the nearest tangential neighbor of $\vp$ (i.e. the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal) is the edge in the polygonalization of $\gamma$.
 \end{proposition}
 
 \begin{proof}
