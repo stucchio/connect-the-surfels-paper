@@ -511,7 +511,7 @@ To extend to the noisy case, we must expand the allowed region to account for ou
     \label{eq:noisySeparationConditions}
     \begin{equation}
       \label{eq:noisySeparationDistance}
-      \curvesep > 3 \pointNoise + 4 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2}
+      \curvesep > 4 \pointNoise + 4 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2}
     \end{equation}
     \begin{equation}
       \label{eq:noisyConstraintOnkmaxEpsilon}
@@ -528,7 +528,7 @@ The proof of Theorem \ref{thm:noisyReconstruction} follows that of Theorem \ref{
 To begin, we need to show that the noisy allowed region is large enough to separate distinct curves. It is here that we use \eqref{eq:noisySeparationDistance}.
 
 \begin{proposition}
-  Let $i \neq j$ and assume that \eqref{eq:noisySeparationConditions} holds. Then $\vp_{i} \nin \nallowed{\epsilon}{\vp_{j}}$ unless $\vp_{i}$ and $\vp_{j}$ are samples from the same curve, and are separated by an arc length no larger than $\curvemaxi \pi/2$.
+  Let $i \neq j$ and assume that \eqref{eq:noisySeparationConditions} holds. Then $\ball{\pointNoise}{\vp_{i}} \cap \nallowed{\epsilon}{\vp_{j}} = \emptyset$ unless $\vp_{i}$ and $\vp_{j}$ are samples from the same curve, and are separated by an arc length no larger than $\curvemaxi \pi/2$.
 \end{proposition}
 
 \begin{proof}
@@ -536,7 +536,7 @@ To begin, we need to show that the noisy allowed region is large enough to separ
 
   Select points $\vp'', \vm''$ to minimize $d(\vp_{i},L'')$, $L''=\vp''+\vm''$, with the constraint that $d(\vp'',\vp) < \pointNoise$ and the angle between $\vm''$ and $\vm$ is smaller than $\tanNoise$. Let $\va \in L''$ be the point for which $d(\va,\vp_{i}) = d(\vp_{i},L'')$.
 
-  It is shown in the proof of Lemma \ref{lem:separationAllowedRegions} that if $d(\vp_{i}, L'') > \curvemax \epsilon^{2}$, then $\vp_{i} \nin \allowed{\epsilon}{\vp''}$ (recall \eqref{eq:1}, \eqref{eq:4}). Thus, if $d(\vp_{i},L'') > \curvemax \epsilon^{2}$ for any $\vp'', \vm''$, then $\vp_{i} \nin \allowed{\epsilon}{\vp''}$ and hence $\vp_{i} \nin \nallowed{\epsilon}{\vp}$. We will show this to be the case.
+  It is shown in the proof of Lemma \ref{lem:separationAllowedRegions} that if $d(\vx, L'') > \curvemax \epsilon^{2}$, then $vx \nin \allowed{\epsilon}{\vp''}$ (recall \eqref{eq:1}, \eqref{eq:4}). Thus, if $d(\vp_{i},L'') > \curvemax \epsilon^{2} + \pointNoise$ for any $\vp'', \vm''$, then $\vx \nin \allowed{\epsilon}{\vp''}$ for each $\vx \in \ball{\pointNoise}{\vp_{i}}$ and hence $\vp_{i} \nin \nallowed{\epsilon}{\vp}$. We will show this to be the case.
 
 %  Let $L=\vp + \vm t$, $t \in [-\epsilon,\epsilon]$ (with $\vp$ and $\vm$ the given data), and let $L'=\vp'+\vm t$ (with $\vp'$ and $\vm'$ the true samples of the curve $\gamma(t)$.
 
@@ -569,7 +569,7 @@ Let $L'=\vp' + \vm' t$ (with $\vp'$ and $\vm'$ being true samples of $\gamma(t)$
   \end{equation}
   Plugging this into \eqref{eq:7} shows that:
   \begin{equation}
-    d(\vp_{i},L'') \geq \curvesep - (3 \pointNoise + 4 \epsilon \tanNoise + \curvemax \epsilon^{2}) \geq 1.1 \curvemax \epsilon^{2} > \curvemax \epsilon^{2}
+    d(\vp_{i},L'') \geq \curvesep - (4 \pointNoise + 4 \epsilon \tanNoise + \curvemax \epsilon^{2}) \geq 1.1 \curvemax \epsilon^{2} > \curvemax \epsilon^{2} + \pointNoise
   \end{equation}
   where the last inequality follows from \eqref{eq:noisySeparationDistance}.
 \end{proof}
