@@ -504,6 +504,8 @@ To extend to the noisy case, we must expand the allowed region to account for ou
 
 \end{algo}
 
+We have the following guarantee that Algorithm \ref{algo:polygonalizationNoisy} works. This result closely follows the proof of Theorem \ref{thm:proofOfAlgo}, and is given in Appendix \ref{sec:proofOfNoisyReconstruction}.
+
 \begin{theorem}
   \label{thm:noisyReconstruction}
   Suppose that Assumptions \ref{ass:curvature}, \ref{ass:separation} and \ref{ass:minSamplingRateNoisy} hold. Suppose also that:
@@ -521,117 +523,28 @@ To extend to the noisy case, we must expand the allowed region to account for ou
   In that case, Algorithm \ref{algo:polygonalizationNoisy} correctly reconstructs the figure.
 \end{theorem}
 
-\subsection{Proof of Theorem \ref{thm:noisyReconstruction}}
+//NEED FIGURES SHOWING THIS WORKS
 
-The proof of Theorem \ref{thm:noisyReconstruction} follows that of Theorem \ref{thm:proofOfAlgo} almost exactly, with minor modifications made to account for the noise.
+\subsection{Cleaning up the noise: why context matters}
 
-To begin, we need to show that the noisy allowed region is large enough to separate distinct curves. It is here that we use \eqref{eq:noisySeparationDistance}.
+Consider a point $\vp$, which is a noisy sample from some curve in the figure. Due to the noise, all we can say apriori is that $\vp$ is close to the true sample $\vp'$, i.e. $\vp \in \ball{\pointNoise}{\vp}$.
 
-\begin{proposition}
-  Let $i \neq j$ and assume that \eqref{eq:noisySeparationConditions} holds. Then $\ball{\pointNoise}{\vp_{i}} \cap \nallowed{\epsilon}{\vp_{j}} = \emptyset$ unless $\vp_{i}$ and $\vp_{j}$ are samples from the same curve, and are separated by an arc length no larger than $\curvemaxi \pi/2$.
-\end{proposition}
-
-\begin{proof}
-  For simplicity, suppose that $\vp_{i} \in \ball{\epsilon}{\vp_{j}}$ (since otherwise, $\vp_{i} \nin \nallowed{\epsilon}{\vp_{j}}$, but $\vp_{i}$ is not sampled from the same curve as $\vp_{j}$. Let $\gamma(t)$ denote the curve from which $\vp_{j}$ is sampled. Let $\vp = \vp_{j}$ and $\vm = \vm_{j}$ to simplify notation.
-
-  Select points $\vp'', \vm''$ to minimize $d(\vp_{i},L'')$, $L''=\vp''+\vm''$, with the constraint that $d(\vp'',\vp) < \pointNoise$ and the angle between $\vm''$ and $\vm$ is smaller than $\tanNoise$. Let $\va \in L''$ be the point for which $d(\va,\vp_{i}) = d(\vp_{i},L'')$.
-
-  It is shown in the proof of Lemma \ref{lem:separationAllowedRegions} that if $d(\vx, L'') > \curvemax \epsilon^{2}$, then $vx \nin \allowed{\epsilon}{\vp''}$ (recall \eqref{eq:1}, \eqref{eq:4}). Thus, if $d(\vp_{i},L'') > \curvemax \epsilon^{2} + \pointNoise$ for any $\vp'', \vm''$, then $\vx \nin \allowed{\epsilon}{\vp''}$ for each $\vx \in \ball{\pointNoise}{\vp_{i}}$ and hence $\vp_{i} \nin \nallowed{\epsilon}{\vp}$. We will show this to be the case.
-
-%  Let $L=\vp + \vm t$, $t \in [-\epsilon,\epsilon]$ (with $\vp$ and $\vm$ the given data), and let $L'=\vp'+\vm t$ (with $\vp'$ and $\vm'$ the true samples of the curve $\gamma(t)$.
-
-  By the second triangle inequality, we have the bound:
-  \begin{multline}
-    \label{eq:7}
-    d(\vp_{i},L'') = d(\vp_{i},\va) \geq d(\vp_{i}',\va) - d(\vp_{i}, \vp_{i}')\\
-    \geq d(\vp_{i}', \vb) - d(\vb,\va) - d(\vp_{i}, \vp_{i}')
-    \geq \curvesep - d(\vb,\va) - \pointNoise
-  \end{multline}
-  where $\vb$ is the point on $\gamma(t)$ closest to $\vp_{i}'$. Once we show this is greater than $\curvemax \epsilon^{2}$, the proof is complete.
-
-Let $L'=\vp' + \vm' t$ (with $\vp'$ and $\vm'$ being true samples of $\gamma(t)$, approximated by $\vp$ and $vm$). Then we have the bound:
+However, given knowledge that the polygonalization contains the edges $(\vq,\vp)$ and $(\vp,\vr)$, we can obtain further information on $\vp'$. We know that $\vp' \in \ball{\pointNoise}{\vp}$, but we also know that $\vp' \in \nallowed{\epsilon}{\vq}$ and similarly $\vp' \in \nallowed{\epsilon}{\vr}$. Thus:
+\begin{equation}
+  \label{eq:noisyFilteringFromAllowedRegions}
+  \vp' \in \ball{\pointNoise}{\vp} \cap \nallowed{\epsilon}{\vq} \cap  \nallowed{\epsilon}{\vr}
+\end{equation}
+We can then improve our approximation to $\vp'$ by minimizing the worst case error,
+\begin{subequations}
   \begin{equation}
-    \label{eq:6}
-    d(\vb,\va) \leq \sup_{\vg \in L'} d(\vb,\vg) + d(\vg, \va) \leq d(\vb,L') + d(\va,L') \leq \curvemax \epsilon^{2} + d(\va,L')
+    \vp^{new} = \textrm{argmin}_{\vp}  \sup_{\vx \in A} \abs{\vp - \vx}, ~ A = \ball{\pointNoise}{\vp} \cap \nallowed{\epsilon}{\vq} \cap  \nallowed{\epsilon}{\vr}
   \end{equation}
-  The bound on $d(\vb, \vg)$ follows since $\vb$ is a sample from $\gamma(t)$ (recalling \eqref{eq:1}, \eqref{eq:4}).
-
-  Since $\va=\vp'' + \vm'' s$ (for some $s \in [-\epsilon,\epsilon]$), we can perform the bound:
-  \begin{multline}
-    \label{eq:5}
-    d(\va,L') = \sup_{\abs{t} \leq \epsilon} d(\va, \vp' + \vm' t) \leq \sup_{\abs{s} \leq \epsilon} \sup_{ \abs{t} \leq \epsilon} d(\vp'' + \vm'' s, \vp' + \vm' t) \\
-    \leq d(\vp'' + m'' \epsilon, \vp' + \vm' \epsilon) \leq 2 \pointNoise + 4 \tanNoise \epsilon
-  \end{multline}
-  In \eqref{eq:5}, we assume $m'$ and $m''$ are oriented the same way. It is easy enough to see that the sup is achieved at the endpoints; we then use the triangle inequality $d(\vp'', vp') < d(\vp'', \vp) + d(\vp, \vp') \leq 2 \pointNoise$, and similarly for the tangents.
-  Thus, we find that:
+  the mean error,
   \begin{equation}
-    \eqref{eq:6} \leq \curvemax \epsilon^{2} + 2 \pointNoise + 4 \epsilon \tanNoise
+    \vp^{new} = \textrm{argmin}_{\vp}  \int_{A} \abs{\vp - \vx} d\vx
   \end{equation}
-  Plugging this into \eqref{eq:7} shows that:
-  \begin{equation}
-    d(\vp_{i},L'') \geq \curvesep - (4 \pointNoise + 4 \epsilon \tanNoise + \curvemax \epsilon^{2}) \geq 1.1 \curvemax \epsilon^{2} > \curvemax \epsilon^{2} + \pointNoise
-  \end{equation}
-  where the last inequality follows from \eqref{eq:noisySeparationDistance}.
-\end{proof}
-
-This shows that the graph $G$ computed in Step 1 separates distinct curves.
-
-The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, and shows that the noisy allowed region contains nearby points on the polygonalization.
-
-\begin{proposition}
-  Suppose the figure is sampled at a rate satisfying \eqref{eq:constraintOnkmaxEpsilon}. Then $G$ contains the polygonalization of the figure.
-\end{proposition}
-
-\begin{proof}
-  The point $\vp_{i}$ and tangent $\vm_{i}$ are close to some point $\vp_{i}', \vm_{i}'$ on the figure $\curveSet$; in particular, $\abs{\vp_{i} - \vp_{i}'} \leq \pointNoise$ and $\arccos(\vm_{i} \cdot \vm_{i}') < \tanNoise$ . Similarly, there is a point $\vp_{j}'$ on the figure a distance no more than $\pointNoise$ away from $\vp_{j}$. By Proposition \ref{prop:polyIncludesNeighboringPoints}, $\vp_{j}' \in \allowed{\epsilon}{\vp_{i}'}$. Since $\vp_{j}' \in \ball{\pointNoise}{\vp_{j}}$ and $\vp_{j}' \in \allowed{\epsilon}{\vp_{i}'} \subset \nallowed{\epsilon}{\vp_{i}}$, we find that $\vp_{j}' \in \ball{\pointNoise}{\vp_{j}} \cap \nallowed{\epsilon}{\vp_{i}} \neq \emptyset$. Repeating this argument with $i$ and $j$ interchanged shows that \eqref{eq:noisyConditionForCheckingIfEdgeConnectionIsPlausible} holds, and $(\vp_{i}, \vp_{j})$ is an edge of $G$.
-\end{proof}
-
-\begin{proposition}
-  \label{lem:noisyClosestTangentPointInAllowedRegionIsCorrect}
-  Fix a point $\vp_{i}=\vp \in \pointData$, and suppose that Assumption \ref{ass:minSamplingRateNoisy} holds. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ (as per Step 1 of Algorithm \ref{algo:polygonalizationNoisy}) and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:noisyConstraintOnkmaxEpsilon}.
-
-  Then the nearest tangential neighbor of $\vp$ (i.e. the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal) is the edge in the polygonalization of $\gamma$.
-\end{proposition}
-
-\begin{proof}
-  The idea of the proof follows that of Lemma \ref{lem:closestTangentPointInAllowedRegionIsCorrect} closely, but we must adjust for our uncertainty as to the point and tangent.
-
-  The curve itself has the parameterization $\gamma(t) = \vp' + \vm' t + \vm'^{\perp} w(t)$, by Lemma \ref{lem:localGraphParameterization}, and this is valid for $\abs{t} < \curvemaxi$. However, we do not know $\vp'$ and $\vm'$, only $\vp$ and $\vm$. We wish to find the point $\vp_{j}$ for which $\vm' \cdot (\vp_{j}' - \vp')$ is minimal, and we approximate this by finding the point for which $\vm \cdot (\vp_{j} - \vp)$ is minimal.
-
-Using the fact that $\vm \cdot (\vp_{j} - \vp) - \vm \cdot (\vp_{k} - \vp) = \vm \cdot (\vp_{j}- \vp_{k})$, we find that
-\begin{multline}
-  \label{eq:3}
-  \vm \cdot (\vp_{j} - \vp) - \vm \cdot (\vp_{k} - \vp) =
-  \vm \cdot (\vp_{j}- \vp_{k}) = \\
-  \vm \cdot (\vp_{j}' - \vp_{k}') + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}']) \\
-  = \vm' \cdot (\vp_{j}' - \vp_{k}') + (\vm - \vm') \cdot (\vp_{j}' - \vp_{k}')  + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}'])
-\end{multline}
-The second and third terms on the right side of \eqref{eq:3} are the error terms. We have the bound:
-\begin{multline*}
-  \abs{(\vm - \vm') \cdot (\vp_{j}' - \vp_{k}')  + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}'])} \\
-  \leq \sqrt{\sin^{2}(\tanNoise) + (1-\cos(\tanNoise) )^{2}} \abs{\vp_{j}' - \vp_{k}'} + 2 \pointNoise
-  \leq 2 (\tanNoise \epsilon + \pointNoise)
-\end{multline*}
-We wish to find the $j$ for which \eqref{eq:3} is negative for every $k$. If we can show that $\abs{\vm' \cdot (\vp_{j}' - \vp_{k}')} > 2(\tanNoise \epsilon + \pointNoise)$, we are done.
-
-If we observe that $\vp_{j}' = \vp' + \vm' t_{j} + w(t_{j}) \vm'^{\perp}$ (using the notation of Lemma \ref{lem:localGraphParameterization}), and similarly $\vp_{k}' = \vp' + \vm' t_{k} + w(t_{k}) \vm'^{\perp}$, we find then that $\vm' \cdot (\vp_{j}'-\vp_{k}') = t_{j}-t_{k}$.
-
-It is here we use the fact that $\abs{\vp_{j} - \vp_{k}}^{2} = (t_{j}-t_{k})^{2} + (w(t_{j})-w(t_{k}))^{2} \geq [(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]^{2}$. With $f(z)$ as in Lemma \ref{lem:localGraphParameterization}, we find that:
-\begin{multline*}
-  \abs{(w(t_{j})-w(t_{k}))} = \abs{w'(y)}\abs{(t_{j}-t_{k})} \leq \frac{1}{f'(f^{-1}(\curvemax y))} \abs{(t_{j}-t_{k})} \\
-  = (1+(f^{-1}(\curvemax y))^{2})^{3/2} \abs{(t_{j}-t_{k} )}
-\end{multline*}
-for some $y \in [0,\curvemaxi]$. If $\curvemax y < 1/\sqrt{2}$ (i.e. \eqref{eq:constraintOnkmaxEpsilon} is satisfied), then $f^{-1}(\curvemax y) < 1$ and $(1+f^{-1}(\curvemax y)^{2}) < 2$. Thus:
-\begin{multline}
-  \abs{(1+2^{3/2})(t_{j}-t_{k})}^{2} \\
-  \geq (t_{j}-t_{k})^{2} + [(1+(f^{-1}(\curvemax y))^{2})^{3/2} (t_{j}-t_{k} )]^{2} \\
-  \geq \abs{\vp_{j} - \vp_{k}}^{2}  \geq [(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]^{2}
-\end{multline}
-(the last inequality follows from Assumption \ref{ass:minSamplingRateNoisy}) implying that $\abs{t_{j}-t_{k}} \geq 2(\tanNoise \epsilon + \pointNoise)$.
-\end{proof}
-
-
-//FINISH THIS SECTION//
+\end{subequations}
+or other error functionals (depending on the particular application). Noise in the tangential data can be similarly reduced. Since this is not necessary for polygonalization,  we will not expand further on this, but we consider the possibility to be worth mentioning.
 
 \section{Examples}
 
@@ -746,6 +659,116 @@ In practice, we have found $\alpha=1.1$ and $l=4$ work reasonably well. Figure \
 \end{figure}
 
 \appendix
+
+\section{Proof of Theorem \ref{thm:noisyReconstruction}}
+\label{sec:proofOfNoisyReconstruction}
+The proof of Theorem \ref{thm:noisyReconstruction} follows that of Theorem \ref{thm:proofOfAlgo} almost exactly, with minor modifications made to account for the noise.
+
+To begin, we need to show that the noisy allowed region is large enough to separate distinct curves. It is here that we use \eqref{eq:noisySeparationDistance}.
+
+\begin{proposition}
+  Let $i \neq j$ and assume that \eqref{eq:noisySeparationConditions} holds. Then $\ball{\pointNoise}{\vp_{i}} \cap \nallowed{\epsilon}{\vp_{j}} = \emptyset$ unless $\vp_{i}$ and $\vp_{j}$ are samples from the same curve, and are separated by an arc length no larger than $\curvemaxi \pi/2$.
+\end{proposition}
+
+\begin{proof}
+  For simplicity, suppose that $\vp_{i} \in \ball{\epsilon}{\vp_{j}}$ (since otherwise, $\vp_{i} \nin \nallowed{\epsilon}{\vp_{j}}$, but $\vp_{i}$ is not sampled from the same curve as $\vp_{j}$. Let $\gamma(t)$ denote the curve from which $\vp_{j}$ is sampled. Let $\vp = \vp_{j}$ and $\vm = \vm_{j}$ to simplify notation.
+
+  Select points $\vp'', \vm''$ to minimize $d(\vp_{i},L'')$, $L''=\vp''+\vm''$, with the constraint that $d(\vp'',\vp) < \pointNoise$ and the angle between $\vm''$ and $\vm$ is smaller than $\tanNoise$. Let $\va \in L''$ be the point for which $d(\va,\vp_{i}) = d(\vp_{i},L'')$.
+
+  It is shown in the proof of Lemma \ref{lem:separationAllowedRegions} that if $d(\vx, L'') > \curvemax \epsilon^{2}$, then $vx \nin \allowed{\epsilon}{\vp''}$ (recall \eqref{eq:1}, \eqref{eq:4}). Thus, if $d(\vp_{i},L'') > \curvemax \epsilon^{2} + \pointNoise$ for any $\vp'', \vm''$, then $\vx \nin \allowed{\epsilon}{\vp''}$ for each $\vx \in \ball{\pointNoise}{\vp_{i}}$ and hence $\vp_{i} \nin \nallowed{\epsilon}{\vp}$. We will show this to be the case.
+
+%  Let $L=\vp + \vm t$, $t \in [-\epsilon,\epsilon]$ (with $\vp$ and $\vm$ the given data), and let $L'=\vp'+\vm t$ (with $\vp'$ and $\vm'$ the true samples of the curve $\gamma(t)$.
+
+  By the second triangle inequality, we have the bound:
+  \begin{multline}
+    \label{eq:7}
+    d(\vp_{i},L'') = d(\vp_{i},\va) \geq d(\vp_{i}',\va) - d(\vp_{i}, \vp_{i}')\\
+    \geq d(\vp_{i}', \vb) - d(\vb,\va) - d(\vp_{i}, \vp_{i}')
+    \geq \curvesep - d(\vb,\va) - \pointNoise
+  \end{multline}
+  where $\vb$ is the point on $\gamma(t)$ closest to $\vp_{i}'$. Once we show this is greater than $\curvemax \epsilon^{2}$, the proof is complete.
+
+Let $L'=\vp' + \vm' t$ (with $\vp'$ and $\vm'$ being true samples of $\gamma(t)$, approximated by $\vp$ and $vm$). Then we have the bound:
+  \begin{equation}
+    \label{eq:6}
+    d(\vb,\va) \leq \sup_{\vg \in L'} d(\vb,\vg) + d(\vg, \va) \leq d(\vb,L') + d(\va,L') \leq \curvemax \epsilon^{2} + d(\va,L')
+  \end{equation}
+  The bound on $d(\vb, \vg)$ follows since $\vb$ is a sample from $\gamma(t)$ (recalling \eqref{eq:1}, \eqref{eq:4}).
+
+  Since $\va=\vp'' + \vm'' s$ (for some $s \in [-\epsilon,\epsilon]$), we can perform the bound:
+  \begin{multline}
+    \label{eq:5}
+    d(\va,L') = \sup_{\abs{t} \leq \epsilon} d(\va, \vp' + \vm' t) \leq \sup_{\abs{s} \leq \epsilon} \sup_{ \abs{t} \leq \epsilon} d(\vp'' + \vm'' s, \vp' + \vm' t) \\
+    \leq d(\vp'' + m'' \epsilon, \vp' + \vm' \epsilon) \leq 2 \pointNoise + 4 \tanNoise \epsilon
+  \end{multline}
+  In \eqref{eq:5}, we assume $m'$ and $m''$ are oriented the same way. It is easy enough to see that the sup is achieved at the endpoints; we then use the triangle inequality $d(\vp'', vp') < d(\vp'', \vp) + d(\vp, \vp') \leq 2 \pointNoise$, and similarly for the tangents.
+  Thus, we find that:
+  \begin{equation}
+    \eqref{eq:6} \leq \curvemax \epsilon^{2} + 2 \pointNoise + 4 \epsilon \tanNoise
+  \end{equation}
+  Plugging this into \eqref{eq:7} shows that:
+  \begin{equation}
+    d(\vp_{i},L'') \geq \curvesep - (4 \pointNoise + 4 \epsilon \tanNoise + \curvemax \epsilon^{2}) \geq 1.1 \curvemax \epsilon^{2} > \curvemax \epsilon^{2} + \pointNoise
+  \end{equation}
+  where the last inequality follows from \eqref{eq:noisySeparationDistance}.
+\end{proof}
+
+This shows that the graph $G$ computed in Step 1 separates distinct curves.
+
+The next result parallels Proposition \ref{prop:polyIncludesNeighboringPoints}, and shows that the noisy allowed region contains nearby points on the polygonalization.
+
+\begin{proposition}
+  Suppose the figure is sampled at a rate satisfying \eqref{eq:constraintOnkmaxEpsilon}. Then $G$ contains the polygonalization of the figure.
+\end{proposition}
+
+\begin{proof}
+  The point $\vp_{i}$ and tangent $\vm_{i}$ are close to some point $\vp_{i}', \vm_{i}'$ on the figure $\curveSet$; in particular, $\abs{\vp_{i} - \vp_{i}'} \leq \pointNoise$ and $\arccos(\vm_{i} \cdot \vm_{i}') < \tanNoise$ . Similarly, there is a point $\vp_{j}'$ on the figure a distance no more than $\pointNoise$ away from $\vp_{j}$. By Proposition \ref{prop:polyIncludesNeighboringPoints}, $\vp_{j}' \in \allowed{\epsilon}{\vp_{i}'}$. Since $\vp_{j}' \in \ball{\pointNoise}{\vp_{j}}$ and $\vp_{j}' \in \allowed{\epsilon}{\vp_{i}'} \subset \nallowed{\epsilon}{\vp_{i}}$, we find that $\vp_{j}' \in \ball{\pointNoise}{\vp_{j}} \cap \nallowed{\epsilon}{\vp_{i}} \neq \emptyset$. Repeating this argument with $i$ and $j$ interchanged shows that \eqref{eq:noisyConditionForCheckingIfEdgeConnectionIsPlausible} holds, and $(\vp_{i}, \vp_{j})$ is an edge of $G$.
+\end{proof}
+
+\begin{proposition}
+  \label{lem:noisyClosestTangentPointInAllowedRegionIsCorrect}
+  Fix a point $\vp_{i}=\vp \in \pointData$, and suppose that Assumption \ref{ass:minSamplingRateNoisy} holds. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ (as per Step 1 of Algorithm \ref{algo:polygonalizationNoisy}) and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:noisyConstraintOnkmaxEpsilon}.
+
+  Then the nearest tangential neighbor of $\vp$ (i.e. the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal) is the edge in the polygonalization of $\gamma$.
+\end{proposition}
+
+\begin{proof}
+  The idea of the proof follows that of Lemma \ref{lem:closestTangentPointInAllowedRegionIsCorrect} closely, but we must adjust for our uncertainty as to the point and tangent.
+
+  The curve itself has the parameterization $\gamma(t) = \vp' + \vm' t + \vm'^{\perp} w(t)$, by Lemma \ref{lem:localGraphParameterization}, and this is valid for $\abs{t} < \curvemaxi$. However, we do not know $\vp'$ and $\vm'$, only $\vp$ and $\vm$. We wish to find the point $\vp_{j}$ for which $\vm' \cdot (\vp_{j}' - \vp')$ is minimal, and we approximate this by finding the point for which $\vm \cdot (\vp_{j} - \vp)$ is minimal.
+
+Using the fact that $\vm \cdot (\vp_{j} - \vp) - \vm \cdot (\vp_{k} - \vp) = \vm \cdot (\vp_{j}- \vp_{k})$, we find that
+\begin{multline}
+  \label{eq:3}
+  \vm \cdot (\vp_{j} - \vp) - \vm \cdot (\vp_{k} - \vp) =
+  \vm \cdot (\vp_{j}- \vp_{k}) = \\
+  \vm \cdot (\vp_{j}' - \vp_{k}') + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}']) \\
+  = \vm' \cdot (\vp_{j}' - \vp_{k}') + (\vm - \vm') \cdot (\vp_{j}' - \vp_{k}')  + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}'])
+\end{multline}
+The second and third terms on the right side of \eqref{eq:3} are the error terms. We have the bound:
+\begin{multline*}
+  \abs{(\vm - \vm') \cdot (\vp_{j}' - \vp_{k}')  + \vm \cdot ([\vp_{j} - \vp_{j}'] - [\vp_{k} - \vp_{k}'])} \\
+  \leq \sqrt{\sin^{2}(\tanNoise) + (1-\cos(\tanNoise) )^{2}} \abs{\vp_{j}' - \vp_{k}'} + 2 \pointNoise
+  \leq 2 (\tanNoise \epsilon + \pointNoise)
+\end{multline*}
+We wish to find the $j$ for which \eqref{eq:3} is negative for every $k$. If we can show that $\abs{\vm' \cdot (\vp_{j}' - \vp_{k}')} > 2(\tanNoise \epsilon + \pointNoise)$, we are done.
+
+If we observe that $\vp_{j}' = \vp' + \vm' t_{j} + w(t_{j}) \vm'^{\perp}$ (using the notation of Lemma \ref{lem:localGraphParameterization}), and similarly $\vp_{k}' = \vp' + \vm' t_{k} + w(t_{k}) \vm'^{\perp}$, we find then that $\vm' \cdot (\vp_{j}'-\vp_{k}') = t_{j}-t_{k}$.
+
+It is here we use the fact that $\abs{\vp_{j} - \vp_{k}}^{2} = (t_{j}-t_{k})^{2} + (w(t_{j})-w(t_{k}))^{2} \geq [(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]^{2}$. With $f(z)$ as in Lemma \ref{lem:localGraphParameterization}, we find that:
+\begin{multline*}
+  \abs{(w(t_{j})-w(t_{k}))} = \abs{w'(y)}\abs{(t_{j}-t_{k})} \leq \frac{1}{f'(f^{-1}(\curvemax y))} \abs{(t_{j}-t_{k})} \\
+  = (1+(f^{-1}(\curvemax y))^{2})^{3/2} \abs{(t_{j}-t_{k} )}
+\end{multline*}
+for some $y \in [0,\curvemaxi]$. If $\curvemax y < 1/\sqrt{2}$ (i.e. \eqref{eq:constraintOnkmaxEpsilon} is satisfied), then $f^{-1}(\curvemax y) < 1$ and $(1+f^{-1}(\curvemax y)^{2}) < 2$. Thus:
+\begin{multline}
+  \abs{(1+2^{3/2})(t_{j}-t_{k})}^{2} \\
+  \geq (t_{j}-t_{k})^{2} + [(1+(f^{-1}(\curvemax y))^{2})^{3/2} (t_{j}-t_{k} )]^{2} \\
+  \geq \abs{\vp_{j} - \vp_{k}}^{2}  \geq [(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]^{2}
+\end{multline}
+(the last inequality follows from Assumption \ref{ass:minSamplingRateNoisy}) implying that $\abs{t_{j}-t_{k}} \geq 2(\tanNoise \epsilon + \pointNoise)$.
+\end{proof}
+
 
 \section{Speeding it up: an $O(N \log N)$ algorithm}
 \label{sec:quadTreeSection}
