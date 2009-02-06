@@ -9,15 +9,15 @@ t = arange(-(pi/2)/dt, (pi/2)/dt)*dt
 
 plot(1.2*sin(t), 0.5*sin(t/2)*abs(sin(t)), label="$\\gamma(t)$", color='black') #Possible curvesn
 plot(t, t*0, color='black')
-plot(sin(t),1-cos(t), label='$\\tau^+(t)$', color='blue') #Bounding curves
-plot(sin(t),-1+cos(t), label='$\\tau^-(t)$', color='green')
+plot(sin(t),1-cos(t), label='$\\tau^+(t)$', color='blue',ls='-.') #Bounding curves
+plot(sin(t),-1+cos(t), label='$\\tau^-(t)$', color='green', ls=':')
 
 rad = Ellipse( (0.0, 0.0), pi, pi, 0.0, fill=True, edgecolor="lightblue", facecolor="lightblue" )
 ax.add_patch(rad)
 
 #Forbidden zones
-upper_fz = Ellipse( (0.0, 1.0), 2, 2, 0.0, fill=True, edgecolor="pink", facecolor="pink" )
-lower_fz = Ellipse( (0.0, -1.0), 2, 2, 0.0, fill=True, edgecolor="pink", facecolor="pink" )
+upper_fz = Ellipse( (0.0, 1.0), 2, 2, 0.0, fill=True, edgecolor="orange", facecolor="orange" )
+lower_fz = Ellipse( (0.0, -1.0), 2, 2, 0.0, fill=True, edgecolor="orange", facecolor="orange" )
 ax.add_patch( upper_fz )
 ax.add_patch( lower_fz )
 

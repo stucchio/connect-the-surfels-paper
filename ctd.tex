@@ -63,9 +63,14 @@
 \newcommand{\OtoN}{{0 \ldots N-1}}
 
 \newcommand{\pointData}{{ \{ \vp_{i} \}_{i=\OtoN} }}
+%\newcommand{\pointData}{{ \{ \vp_{i}\, |\, i = 0,\dots,N-1 \} }}
 \newcommand{\tanData}{{ \{ \vm_{i} \}_{i=\OtoN} }}
+%\newcommand{\tanData}{{ \{ \vm_{i}\, |\, i = 0,\dots,N-1 \} }}
+\newcommand{\allData}{{ \{ \vp_{i}, \vm_{i} \}_{i=\OtoN} }}
+%\newcommand{\allData}{{ \{ \vp_{i}, \vm_{i}\, |\, i = 0,\dots,N-1 \} }}
 
 \newcommand{\curveSet}{{ \{ \gamma_i(t) \}_{\Oto{M}}}}
+%\newcommand{\curveSet}{{ \{ \gamma_i(t)\, |\, i = 0,\dots,M-1 \}}}
 \newcommand{\poly}{{\Gamma}}
 
 \newcommand{\ball}[2]{ { B_{#1}(#2) } }
@@ -90,49 +95,60 @@
 \maketitle
 
 \begin{abstract}
-  Reconstructing a finite set of curves from an unordered set of points sampled from the curves is a well studied topic. We ask the less studied question: can one do better if \emph{tangential} information is given as well?
-
-  In this work, we answer this question, and show that if curves are separated from each other by a distance $\curvesep$, then the sampling rate need only be $O(\sqrt{\curvesep})$ for reconstruction. For the case of point data, $O(\curvesep)$ required.
+Reconstructing a finite set of curves from an unordered set of sample points
+is a well studied topic. There has been less
+effort that considers how much better the reconstruction can be if
+\emph{tangential} information is given as well.
+We show that if curves are separated from each other by a
+distance $\curvesep$, then the sampling rate need only be $O(\sqrt{\curvesep})$
+for error-free reconstruction.
+For the case of point data alone, $O(\curvesep)$ sampling is required.
 \end{abstract}
 
 \section{Introduction}
 
-In this work, we consider the problem of reconstructing a $C^{1}$ \emph{figure} -- a family of curves $\curveSet$. The data we are given consists of an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$. Note that the tangents have no particular orientation; making the change $m_{i} \rightarrow -m_{i}$ destroys no information.
-
-Our goal in this work is to construct an algorithm which reconstructs the polygonalization of the curve from this data. An example of a polygonalization is given in Figure \ref{fig:polygonalization}.
+In this paper, we consider the problem of reconstructing a
+$C^{1}$ \emph{figure} -- that is, a family of curves $\curveSet$ from a finite
+set of data. More precisely, we assume we are given
+an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$. Note that the tangents have no particular orientation; making the change $\vm_{i} \rightarrow -\vm_{i}$ destroys no information.
 
 \begin{definition}
   \label{def:polygonalization}
-  A polygonalization of a figure $\curveSet$ is a planar graph $(V,E)$ with the property that each vertex $p \in V$ is a point on some $\gamma_{i}(t)$, and each edge connects points which are adjacent samples of some curve $\gamma_{i}$.
+  A polygonalization of a figure $\curveSet$ is a planar graph
+$\Gamma = (V,E)$ with the property that each vertex $p \in V$ is a point on some $\gamma_{i}(t)$, and each edge connects points which are adjacent samples of some curve $\gamma_{i}$.
 \end{definition}
+
+Our goal here is to construct an algorithm which reconstructs the
+polygonalization of a figure from the data defined above.
+An example of a polygonalization is given in Figure \ref{fig:polygonalization}.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{polygonalization_example.eps}
-
 \caption{A figure and it's polygonalization, c.f. Definition \ref{def:polygonalization}. }
 \label{fig:polygonalization}
 \end{figure}
 
-The topic of reconstructing figures solely from point data $\pointData$ has been the subject of considerable attention \cite{amenta98crust,amenta98new,dey99curve,hoppe92surface,amenta02simple, dey01reconstructing}. This is actually a more difficult problem, and only weaker results are possible. The main difficulty is the following; if the distance between two separate curves $\gamma_{i}$ and $\gamma_{j}$ is smaller than the sample spacing, then it is difficult to determine which points are associated to which curve. Thus, sample spacing must be $O(\curvesep)$, with $\curvesep$ the distance between different curves.
+The topic of reconstructing figures solely from point data $\pointData$ has been the subject of considerable attention \cite{amenta98crust,amenta98new,dey99curve,hoppe92surface,amenta02simple, dey01reconstructing, edelsbrunner}. This is actually a more difficult problem, and only weaker results are possible. The main difficulty is the following; if the distance between two separate curves $\gamma_{i}$ and $\gamma_{j}$ is smaller than the sample spacing, then it is difficult to determine which points are associated to which curve. Thus, sample spacing must be $O(\curvesep)$, with $\curvesep$ the distance between different curves.
 
-Tangential information makes this task easier; if two points are nearby (say $\vp_{1}$ and $\vp_{2}$), but $\pm \vm_{1}$ does not point (roughly) in the direction $\vp_{2}-\vp_{1}$, then $\vp_{1}$ and $\vp_{2}$ should not be connected. This fact allows us to reduce the sample spacing to $O(\curvesep^{1/2})$, rather than $O(\curvesep)$. This is to be expected; knowledge of a function and it's derivatives allows interpolation with quadratic accuracy.
+Tangential information makes this task easier; in essence, if two points are nearby (say $\vp_{1}$ and $\vp_{2}$), but $\pm \vm_{1}$ does not point (roughly) in the direction $\vp_{2}-\vp_{1}$, then $\vp_{1}$ and $\vp_{2}$ should not be connected. This fact allows us to reduce the sample spacing to $O(\curvesep^{1/2})$, rather than $O(\curvesep)$. This is to be expected; knowledge of a function and its derivatives allows interpolation with quadratic accuracy.
 
-We should mention at this point related work on \emph{Surfels} (short for \emph{Surface Elements}). A surfel is a point, together with information characterizing the tangent plane to a surface at that point (and perhaps other information such as texture). They have become somewhat popular in computer graphics recently, mainly for rendering objects characterized by point clouds \cite{882320,598521,344936,1018057,1103907,383300}.
+We should mention at this point related work on \emph{Surfels} (short for \emph{Surface Elements}). A surfel is a point, together with information characterizing the tangent plane to a surface at that point (and perhaps other information such as texture). They have become somewhat popular in computer graphics recently, mainly for rendering objects characterized by point clouds
+\cite{882320,1103907,598521,1018057,344936,383300}.
 
-In this work, we present an algorithm which allows us to reconstruct a curve from $\pointData$ and $\tanData$. We make two assumptions, under which the algorithm is provably correct.
+In this work, we present an algorithm which allows us to reconstruct a curve from $\allData$. We make two assumptions, under which the algorithm is provably correct.
 
 \begin{assumption}
   \label{ass:curvature}
-  We assume each curve $\gamma_{i}$ has bounded curvature:
+  We assume each curve $\gamma_{i}(t) = (x_i(t),y_i(t))$ has bounded curvature:
   \begin{equation}
     \label{eq:curvatureAssumption}
     \forall i = \Oto{M}, ~ \frac{
-      \abs{\gamma_{i,x}'(t) \gamma_{i,y}''(t) - \gamma_{i,y}'(t) \gamma_{i,x}''(t)}
+      \abs{x_{i}'(t) y_{i}''(t) - y_{i}'(t) x_{i}''(t)}
     } {
-      (\gamma_{i,x}'(t)^{2}+\gamma_{i,y}'(t)^{2})^{3/2}
+      (x_{i}'(t)^{2}+y_{i}'(t)^{2})^{3/2}
     } \leq \curvemax
   \end{equation}
 \end{assumption}
@@ -145,19 +161,23 @@ This assumption is necessary to prevent the curves from oscillating too much bet
   \begin{subequations}
     \begin{equation}
       \label{eq:separationAssumption}
-      \sup_{t,t'} \abs{ \gamma_{i}(t) - \gamma_{j}(t')} \geq \curvesep \textrm{~for~} i \neq j
+      \inf_{t,t'} \abs{ \gamma_{i}(t) - \gamma_{j}(t')} \geq \curvesep \textrm{~for~} i \neq j
     \end{equation}
-    We also assume different areas of the same curve are separated
+    We also assume that different areas of the same curve are separated
     from each other:
     \begin{equation}
       \label{eq:separationAssumptionSameCurve}
-      \sup_{\abs{t-t'} > \curvemaxi\pi/2 } \abs{ \gamma_{i}(t) - \gamma_{i}(t')} \geq \curvesep
+      \inf_{\abs{t-t'} > \curvemaxi\pi/2 } \abs{ \gamma_{i}(t) - \gamma_{i}(t')} \geq \curvesep
     \end{equation}
   \end{subequations}
   (assuming the curve $\gamma_{i}(t)$ proceeds with unit speed).
 \end{assumption}
 
-This assumption makes sure the curves do not come too close together for us to determine which points correspond to which curve (or which part of the same curve). This is illustrated in Figure \ref{fig:separationBetweenCurves}.
+This assumption ensures that two distinct curves do not come too close
+together (\ref{ass:curvature})  and that separate regions of
+the same curve do not come
+arbitrarily close (\ref{ass:separation}).
+This is illustrated in Figure \ref{fig:separationBetweenCurves}.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -165,17 +185,18 @@ This assumption makes sure the curves do not come too close together for us to d
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{assumption_two.eps}
 
-\caption{An illustration of Assumption \ref{ass:separation}. The black arrow illustrates \eqref{eq:separationAssumption}, while the red arrow illustrates \eqref{eq:separationAssumptionSameCurve}.}
+\caption{An illustration of Assumption \ref{ass:separation}. The black arrow illustrates the condition \eqref{eq:separationAssumption}, while the red arrow illustrates the condition \eqref{eq:separationAssumptionSameCurve}.}
 \label{fig:separationBetweenCurves}
 \end{figure}
 
-\section{Geometry}
-\subsection{Definition and notations}
-Before we begin, we define some notation which we will use.
+\section{The Reconstruction Algorithm}
+
+Before we begin, we require some notation.
 
 \begin{definition}
   \label{def:perp}
-  For a vector $\vv$, let $\vv^{\perp}$ denote the vector $\vv$ rotated $\pi/2$ to the right.
+  For a vector $\vv$, let $\vv^{\perp}$ denote the vector $\vv$
+rotated clockwise by an angle $\pi/2$.
 \end{definition}
 
 \begin{definition}
@@ -184,37 +205,57 @@ Before we begin, we define some notation which we will use.
 \end{definition}
 
 \begin{definition}
-  For a point $\vp$ and a curve $\gamma_{i}(t)$, we say that $\vp \in \gamma_{i}(t)$ if $\exists t, \gamma_{i}(t)=\vp$.
+  For a point $\vp$ and a curve $\gamma_{i}(t)$, we say that $\vp \in \gamma_{i}(t)$ if $\exists t such that \gamma_{i}(t)=\vp$.
 \end{definition}
 
-As is normal for most interpolation theorems, we need an assumption on the variation of the curve, in this case the curvature.
+\subsection{The Forbidden Zone}
 
-\subsection{The Algorithm}
+Before explaining the algorithm which constructs the polygonalization of
+a figure (the set of curves $\curveSet$) from discrete data $\allData$, we
+prove a basic lemma which forms the foundation of our method.
+We assume for the remainder of this section that the figure
+satisfies Assumption 1.
 
-We assume there is a set of curves $\curveSet$, which we call the figure. Our goal is to construct a polygonalization of $\curveSet$ from data consisting of points $\pointData$ and tangent directions at the points, $\tanData$. Before we explain the algorithm that calculates the polygonalization, we prove a basic lemma which forms the foundation of our method.
-\begin{lemma}
-  \label{lem:forbiddenZone}
-  For every $i \neq j$, if $\vp_{j} \in \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi}$, then $(\vp_{i},\vp_{j})$ is not an edge in $\poly$. Here, $\ball{r}{\vp}$ is the ball of radius $r$ about $\vp$.
+\begin{definition}
+  For a point $\vp_{i}$, we refer to the set
+$\cup_{\pm} \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi}$
+as its \emph{forbidden zone},
+illustrated in Fig. \ref{fig:forbiddenZone}.
+Here, $\ball{r}{\vp}$ is the usual ball of radius $r$ about $\vp$.
+\end{definition}
 
-  We refer to the set $\cup_{\pm} \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi}$ as the \emph{forbidden zone}; this region is illustrated in Fig. \ref{fig:forbiddenZone}.
-\end{lemma}
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{forbidden_zone.eps}
-
-\caption{The forbidden zones, as described in Lemma \ref{lem:forbiddenZone}. The pink is the forbidden zone, and the blue is the set of points a distance $\pi \curvemaxi/2$ away from $p_{i}$.}
+\caption{The forbidden zones, as described in Lemma \ref{lem:forbiddenZone}.
+The orange (darker region) is the forbidden zone, and the blue (lighter region)
+is the set of points a distance $\pi \curvemaxi/2$ away from $p_{i}$.}
 \label{fig:forbiddenZone}
 \end{figure}
+
+\begin{lemma}
+\label{lem:forbiddenZone}
+For every $i \neq j$, if $\vp_{j}$ is in the forbidden zone of $\vp_i$,
+then $(\vp_{i},\vp_{j})$ is not an edge in $\poly$ assuming that the
+sample spacing is less than $\curvemaxi \pi/2$.
+\end{lemma}
+
 \begin{proof}
-  Suppose for simplicity that $\vp_{i}=(0,0)$ and $\vm_{i}=(1,0)$. Now, consider a line $\tau(t)$ of maximal curvature. The curve of maximal curvature, with $\tau_{y}'(t) > 0$ and proceeding at speed $\curvemaxi$ is $\tau^{+}(t)=(\curvemaxi \sin(t), \curvemaxi (1-\cos(t)))$, while the curve with $\tau_{y}'(t) < 0$ is $\tau^{-}(t)=(\curvemaxi \sin(t), \curvemaxi (\cos(t)-1))$.
+Suppose for simplicity that $\vp_{i}=(0,0)$ and $\vm_{i}=(1,0)$. Now, consider a line $\tau(t)$ of maximal curvature. The curve of maximal curvature, with $\tau_{y}'(t) > 0$ and proceeding at speed $\curvemaxi$ is $\tau^{+}(t)=(\curvemaxi \sin(t), \curvemaxi (1-\cos(t)))$, while the curve with $\tau_{y}'(t) < 0$ is $\tau^{-}(t)=(\curvemaxi \sin(t), \curvemaxi (\cos(t)-1))$.
 
-Any other curve $\gamma(t)$ must lie between these curves (the blue and green curves in Fig \ref{lem:forbiddenZone}). Thus, it is confined to the blue region while it's arc length is less than $\curvemaxi \pi/2$. If $\gamma(t)$ connects $\vp_{i}$ to $\vp_{j}$, then it must do so after travelling a distance greater than $\curvemaxi \pi/2$.
-
+By assumption 1, the curve $\gamma(t)$ containing $\vp_i$
+must lie between these curves (the near boundaries of the forbidden zone
+in Fig \ref{lem:forbiddenZone}). Thus, it is confined to the blue (lighter)
+region while its arc length is less than $\curvemaxi \pi/2$.
+If $\vp_{j}$ is in the forbidden zone and
+$\gamma(t)$ connects $\vp_{i}$ to $\vp_{j}$, then it must do so after travelling a distance greater than $\curvemaxi \pi/2$.
 \end{proof}
 
-This shows that the extra information the tangents provides us can be used to exclude certain edges from the polygonalization; basically, all edges should point roughly in the direction of the tangent. This allows us to reject edges which would point in the wrong direction, yielding a more accurate polygonalization (c.f. Fig. \ref{fig:proximityVsTangentBased}).
+In short, the extra information provided by the tangents
+allows us to exclude edges from the polygonalization if they point too far away
+from the tangent, resulting in higher fidelity (c.f. Fig. \ref{fig:proximityVsTangentBased}).
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -222,37 +263,51 @@ This shows that the extra information the tangents provides us can be used to ex
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{tangents_good_for.eps}
 
-\caption{A naive proximity-based reconstruction algorithm (shown), or even $\beta$-crust type algorithms, will add edges between different curves. Knowledge of the forbidden zone (indicated in pink) allows us to remove such edges.}
+\caption{A naive proximity-based reconstruction algorithm (shown),
+or even a $\beta$-crust type algorithm, will introduce edges
+between different curves. Knowledge of the forbidden zone allows us to
+remove such edges.}
 \label{fig:proximityVsTangentBased}
 \end{figure}
 
 \begin{definition}
   \label{def:AllowedRegion}
-  Define the set $\allowed{\epsilon}{\vp}$ to be:
+For a point $\vp$, we define the \emph{allowed zone} or
+\emph{allowed region} $\allowed{\epsilon}{\vp}$ by
   \begin{equation}
     \label{eq:allowedRegion}
     \allowed{\epsilon}{\vp}=\ball{\epsilon}{\vp_{i}} \setminus \left[ \cup_{\pm} \ball{\curvemaxi}{\vp_{i} \pm \vm_{i}^{\perp} \curvemaxi} \right]
   \end{equation}
-  That is, $\allowed{\epsilon}{\vp}$ is the ball of radius $\epsilon$ about $p$ excluding the forbidden zone.  We call this the \emph{allowed zone} or \emph{allowed region}.
+  That is, $\allowed{\epsilon}{\vp}$ is the ball of radius $\epsilon$ about $p$ excluding the forbidden zone.
 \end{definition}
-Any edge in the polygonalization starting at $\vp$, with length shorter than $\epsilon$, must connect to another point $\vq \in \allowed{\epsilon}{\vp}$.
 
-We are now ready to describe the polygonalization algorithm.
+Clearly, any edge in the polygonalization starting at $\vp$, with length shorter than $\epsilon$, must connect to another point $\vq \in \allowed{\epsilon}{\vp}$.  We are now ready to describe the polygonalization algorithm.
 
+\vspace{.2in}
+
+\hrule
 \begin{algo}
   \label{algo:polygonalization}
-  {\bf Polygonalization Algorithm }
+  \begin{center} {\bf (Noise-Free Polygonalization)}
+  \end{center}
 
-  { \bf Input: }
+\vspace{.1in}
 
-  \begin{itemize}
-  \item The maximal curvature, $\curvemax$.
-  \item A parameter $\epsilon$ satisfying $\epsilon \curvemax < 2^{-1/2}$ and $2 \curvemax \epsilon^{2} < \curvesep$.
-  \item The data $\pointData$ and $\tanData$. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
-  \end{itemize}
+\hrule
 
+\vspace{.2in}
 
-  {\bf Algorithm: }
+\noindent { \bf Input: }
+[ We assume we are given
+the dataset $\allData$,
+the maximal curvature $\curvemax$, and
+a parameter $\epsilon$ satisfying both
+$\epsilon \curvemax < 1/\sqrt{2}$ and $2 \curvemax \epsilon^{2} < \curvesep$.
+We assume that adjacent points on a given curve
+are less than a distance $\epsilon$ apart, i.e. the curve is
+$\epsilon$-sampled. ]
+
+\vspace{.1in}
 
   \begin{enumerate}
   \item Compute the graph $G = (\pointData, E)$ with edge set:
@@ -279,7 +334,13 @@ We are now ready to describe the polygonalization algorithm.
 
 \end{algo}
 
-We also have the following result, which guarantees the correctness of Algorithm \ref{algo:polygonalization}.
+\begin{remark}
+  As presented, the complexity of Algorithm \ref{algo:polygonalization} is $O(N^{2})$, due to both step 1 and step 2. (Step 2 can be slow if $O(N)$ points are within the allowed region of some particular point). The complexity can be reduced to $O(N \log N)$; this is discussed in Appendix \ref{sec:quadTreeSection}.
+\end{remark}
+
+The following theorem guarantees the correctness of
+Algorithm \ref{algo:polygonalization}. Its proof is presented
+in the next section.
 
 \begin{theorem}
   \label{thm:proofOfAlgo}
@@ -299,17 +360,12 @@ We also have the following result, which guarantees the correctness of Algorithm
   Suppose also that the distance between adjacent samples in the polygonalization is bounded by $\epsilon$, i.e. the curve is $\epsilon$-sampled. Then graph $\Gamma$ returned by Algorithm \ref{algo:polygonalization} is the polygonalization of $\curveSet$.
 \end{theorem}
 
-We prove this shortly.
-
-\begin{remark}
-  As presented, the complexity of Algorithm \ref{algo:polygonalization} is $O(N^{2})$, due to both step 1 and step 2. (Step 2 can be slow if $O(N)$ points are within the allowed region of some particular point). The complexity can be reduced to $O(N \log N)$; this is discussed in Appendix \ref{sec:quadTreeSection}.
-\end{remark}
-
 \subsection{Proof of Theorem \ref{thm:proofOfAlgo}}
 
 \begin{lemma}
   \label{lem:separationAllowedRegions}
-  Let $i \neq j$ and let Assumption \ref{ass:separation} hold. Then for all $t, t'$, if \eqref{eq:separationCondition} holds, then
+  Suppose $i \neq j$ and that Assumption \ref{ass:separation} holds.
+Then for all $t, t'$, if \eqref{eq:separationCondition} holds, then
   \begin{equation}
     \label{eq:connectionsBetweenDifferentCurvesNotAllowed}
     \gamma_{j}(t')  \nin  \allowed{\epsilon}{\gamma_{i}(t)}.
@@ -337,7 +393,8 @@ The intermediate value theorem implies $\arcsin( x) \leq \arcsin'(\zeta) x=(1-\z
 Substituting this into \eqref{eq:1} yields:
 \begin{equation}
   \label{eq:4}
-  \eqref{eq:1} \leq  2 \curvemaxi \sin^{2}( \sqrt{2} \curvemax \epsilon/2) \leq \curvemax \epsilon^{2}
+  d(\vq,L) \leq
+  2 \curvemaxi \sin^{2}( \sqrt{2} \curvemax \epsilon/2) \leq \curvemax \epsilon^{2}
 \end{equation}
 
 Thus, the \emph{normal} distance between any point in $\allowed{\epsilon}{\vp}$ and $L$ is $O(\curvemax \epsilon^{2})$.
@@ -354,9 +411,9 @@ But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'),
 The proof when $i=j$ is identical.
 \end{proof}
 
-This result shows that the graph $G$, computed in Step 1 of Algorithm \ref{algo:polygonalization}, separates different $\gamma_{i}$ and $\gamma_{j}$ from each other, as well as different parts of the same curve. Thus, after Step 1, we are left with a graph $G$ having edges only between points $\vp_{i}$ and $\vp_{j}$ which are on the same curve $\gamma_{k}$, and which have are separated in $\gamma_{k}$ by an arc length no more than $\curvemaxi \pi/2$.
+This result shows that the graph $G$, computed in Step 1 of Algorithm \ref{algo:polygonalization}, separates different $\gamma_{i}$ and $\gamma_{j}$ from each other, as well as different parts of the same curve. Thus, after Step 1, we are left with a graph $G$ having edges only between points $\vp_{i}$ and $\vp_{j}$ which are on the same curve $\gamma_{k}$, and which are separated along $\gamma_{k}$ by an arc length no more than $\curvemaxi \pi/2$.
 
-We now show that $G$ is a superset of the polygonalization.
+We now show that $G$ is a superset of the polygonalization $\Gamma$.
 
 \begin{proposition}
   \label{prop:polyIncludesNeighboringPoints}
@@ -366,7 +423,7 @@ We now show that $G$ is a superset of the polygonalization.
   If the distance between adjacent points $\vp_{i}$ and $\vp_{j}$ is at most $\epsilon$, then $\vp_{j} \in \ball{\epsilon}{\vp_{i}}$. Since the segment of $\gamma_{k}$ between $\vp_{i}$ and $\vp_{j}$ has arc length less than $\epsilon$, $\vp_{j}$ is not in the forbidden zone of $\vp_{i}$ (by the same argument as in Lemma \ref{lem:forbiddenZone}. Thus, $\vp_{j} \in \allowed{\epsilon}{\vp_{i}}$ (and vice versa), and $(\vp_{i},\vp_{j})$ is an edge in $G$.
 \end{proof}
 
-We have now shown that $G$ separates distinct curves, and that $G$ contains the polygonalization of $\curveSet$. It remains to show that $\Gamma$ is the polygonalization.
+We have now shown that $G$ separates distinct curves, and that $G$ contains the polygonalization $\Gamma$ of $\curveSet$. It remains to show that $G = \Gamma$.
 
 \begin{lemma}
   \label{lem:localGraphParameterization}
@@ -385,10 +442,10 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
   \begin{equation*}
     \frac{ \abs{w''(t)} }{(1+w'(t)^{2})^{3/2}} \leq \curvemax
   \end{equation*}
-  Assuming $w''(t)$ is positive, this is a first order nonlinear differential inequality for $w'(t)$. We can integrate both sides (using the hyperbolic trig substitution $w(t)=\sinh(\theta)$ for the left side) to obtain:
+  Assuming $w''(t)$ is positive, this is a first order nonlinear differential inequality for $w'(t)$. We can integrate both sides (using the hyperbolic trigonometric substitution $w(t)=\sinh(\theta)$ for the left side) to obtain:
   \begin{equation}
     \label{eq:2}
-    \frac{w'(t)}{\sqrt{1+w'(t)^{2}}} \leq \curvemax t
+    \frac{w'(t)}{\sqrt{1+w'(t)^{2}}} \leq \curvemax t \, .
   \end{equation}
   With $f(z)$ defined as in the statement, then $f^{-1}(z)$ is singular only at $z=\pm 1$, and is regular before that. Solving \eqref{eq:2} for $w'(t)$ shows that:
   \begin{equation*}
@@ -399,14 +456,9 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 
 \begin{lemma}
   \label{lem:closestTangentPointInAllowedRegionIsCorrect}
-  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
-
-  Then only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
+  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation, say $+$. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+Then, the only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
 \end{lemma}
-
-\begin{remark}
-  The minimal edge is the edge $\vr^{+}_{0}$ as computed in Step (2b) of Algorithm \ref{algo:polygonalization}.
-\end{remark}
 
 \begin{proof}
   By Lemma \ref{lem:localGraphParameterization}, the curve $\gamma(t)$ can be locally parameterized as a graph near $\vp$, i.e. \eqref{eq:localGraphParameterization}. This is valid up to a distance $\curvemaxi$; by \eqref{eq:constraintOnkmaxEpsilon}, it is valid for all points in the graph $G$ connected to $\vp$.
@@ -414,7 +466,9 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 The adjacent points on the graph are the ones for which $\abs{t-t_{0}}$ is minimal. Note that $\vm_{0} \cdot (\vp_{j} - \vp) = t$ (simply plug in \eqref{eq:localGraphParameterization}); thus, minimizing $\vm_{0} \cdot (\vp_{j} - \vp)$ selects the adjacent point on the graph.
 \end{proof}
 
-Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:polygonalization}, is the polygonalization of $\curveSet$.
+The minimal edge is the edge $\vr^{+}_{0}$ as computed in Step (2b) of Algorithm \ref{algo:polygonalization}.
+Thus, we have shown that the computed graph $G$ is the polygonalization
+$\Gamma$ of $\curveSet$.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -426,59 +480,74 @@ Thus, we have shown that the graph $\Gamma$, as computed by Algorithm \ref{algo:
 \label{fig:basicExample}
 \end{figure}
 
-\section{Noisy Data}
+\section{Reconstruction in the Presence of Noise}
 
-In real life, one rarely has perfect data. For this reason, it is important to consider the case of noisy data. Toward that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and tangent data perturbed by noise smaller than $\tanNoise$.
+In practice one rarely has perfect data, so it is important to understand the performance of the approach in the presence of errors.
+To that end, we consider the polygonalization problem, but with the point data perturbed by noise smaller than $\pointNoise$ and the tangent data perturbed by noise smaller than $\tanNoise$.
+By this we mean the following; to each point $\vp_{i} \in \pointData$, there exists a point $\vp_{i,\ast} = \gamma_{k_{i}}(t_{i})$ such that $\abs{\vp_{i}-\vp_{i,\ast}} \leq \pointNoise$. Similarly, the unit tangent vector $\vm_{i}$ differs from the true tangent $\vm_{i,\ast} = \gamma_{k_{i}}'(t_{i})$ by an angle at most $\tanNoise$. By a polygonalization of the noisy data, we mean that $(\vp_{i},\vp_{j})$ is an edge in the noisy polygonalization if $(\vp_{i,\ast},\vp_{j,\ast})$ is an edge in the noise-free polygonalization. In what follows, $\vp_{j}$ refers to a given (noisy) point, while $\vp_{j,\ast}$ refers to the corresponding true point (and similarly for tangents).
 
-By this we mean the following; to each point $\vp_{i} \in \pointData$, there exists a point $\vp_{i}' = \gamma_{k_{i}}(t_{i})$ such that $\abs{\vp_{i}-\vp_{i}'} \leq \pointNoise$. Similarly, the unit tangent vector $\vm_{i}$ differs from the true tangent $\vm_{i}' = \gamma_{k_{i}}'(t_{i})$ by an angle at most $\tanNoise$. By a a polygonalization of the noisy data, we mean that $(\vp_{i},\vp_{j})$ is an edge in the noisy polygonalization if $(\vp_{i}',\vp_{j}')$ is an edge in the non-noisy polygonalization. In what follows, $\vp_{j}$ refers to a given (noisy) point, while $\vp_{j}'$ refers to the corresponding true point (and similarly for tangents).
-
-Of course, the noise introduces a lower limit on the features we can resolve. Obviously, the curves must be separated by a distance at least $\pointNoise$, to prevent noise from actually moving a sample from one curve to another. More seriously, noise in the tangent data introduces uncertainty which forces us to increase the sampling rate; in particular, we require $O(\epsilon \tanNoise + \epsilon^{2}) < \curvesep$.
+Noise, of course, introduces a lower limit on the features we can resolve. At the very least, the curves must be separated by a distance greater than or equal to $\pointNoise$, to prevent noise from actually moving a sample from one curve to another. In addition, noise in the tangent data introduces uncertainty which forces us to increase the sampling rate; in particular, we require $O(\epsilon \tanNoise + \epsilon^{2}) < \curvesep$.
 
 The main idea in extending Algorithm \ref{algo:polygonalization} to the noisy case is to expand the allowed regions to encompass all possible points and tangents. Of course, this imposes new constraints on the separation between curves.
 
-We also require a \emph{minimal} sampling rate in order to ensure that the order of points on the curve is not affected by noise.
+We also require a \emph{maximal} sampling rate in order to ensure that the order of points on the curve is not affected by noise.
+For work in the context of reconstruction using point samples only, see \cite{chengnoise,mdnoise}.
 
 \begin{assumption}
   \label{ass:minSamplingRateNoisy}
-  We assume that adjacent points $\vp_{i}$ and $\vp_{j}$ on the curve $\gamma_{k}(t)$ are separated by a distance greater than $[(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]$.
+  We assume that adjacent points $\vp_{i}$ and $\vp_{j}$ on the curve $\gamma_{k}(t)$ are separated by a distance greater
+  than $[(1+2^{3/2})(2 \tanNoise \epsilon + \pointNoise)]$.
 \end{assumption}
 
-To extend to the noisy case, we must expand the allowed region to account for our uncertainty concerning the actual location of points.
+To compensate for noise, we expand the allowed region to account
+for uncertainty concerning the actual point locations.
 
 \begin{definition}
   \label{def:AllowedRegionNoisy}
-  Define the \emph{noisy allowed region} $\nallowed{\epsilon}{\vp}$ to be:
+The \emph{noisy allowed region} $\nallowed{\epsilon}{\vp_i}$
+is the union of the allowed regions of all points/tangents
+near $(\vp_i, \vm_i)$:
   \begin{equation}
     \label{eq:allowedRegionNoisy}
-    \nallowed{\epsilon}{\vp}= \bigcup_{
+    \nallowed{\epsilon}{\vp_i}= \bigcup_{
       \substack{
-        \abs{\vp'-\vp_{i}} < \pointNoise\\
-        \arccos(\vm_{i} \cdot \vm') < \tanNoise
+        \abs{\vp -\vp_{i}} < \pointNoise\\
+        \arccos(\vm_{i} \cdot \vm) < \tanNoise
       }
     }
     \left(
-      \ball{\epsilon}{\vp'} \setminus \left[ \cup_{\pm} \ball{\curvemaxi}{\vp' \pm \vm'^{\perp} \curvemaxi} \right]
+      \ball{\epsilon}{\vp} \setminus
+\left[ \cup_{\pm} \ball{\curvemaxi}{\vp
+\pm \vm^{\perp} \curvemaxi} \right]
     \right)
   \end{equation}
-  That is, $\nallowed{\epsilon}{\vp}$ is the union of all the allowed regions of points/tangents near $(\vp, \vm)$.
 \end{definition}
 
+\vspace{.2in}
+
+\hrule
 \begin{algo}
   \label{algo:polygonalizationNoisy}
-  {\bf Noisy Polygonalization Algorithm }
+  \begin{center} {\bf (Noisy Polygonalization)}
+  \end{center}
 
-  { \bf Input: }
+\vspace{.1in}
 
-  \begin{itemize}
-  \item The maximal curvature, $\curvemax$, and noise amplitudes $\pointNoise, \tanNoise$.
-  \item A parameter $\epsilon$ satisfying $\epsilon \curvemax < 2^{-1/2}$ and $4 \pointNoise + 2 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2} < \curvesep$.
-  \item The data $\pointData$ and $\tanData$. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
-  \end{itemize}
+\hrule
 
+\vspace{.2in}
 
-  {\bf Algorithm: }
+\noindent { \bf Input: }
+[ We assume we are given the dataset $\allData$, the maximal curvature
+$\curvemax$, the noise amplitudes $\pointNoise, \tanNoise$, and a
+parameter $\epsilon$ satisfying both $\epsilon \curvemax < 1/\sqrt{2}$ and
+$4 \pointNoise + 2 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2} < \curvesep$. We assume that adjacent points on a given curve
+are less than a distance $\epsilon$ apart, i.e. the curve is
+$\epsilon$-sampled. ]
 
-  \begin{enumerate}
+\vspace{.1in}
+
+\begin{enumerate}
   \item Compute the graph $G = (\pointData, E)$ with edge set:
     \begin{equation}
       \label{eq:noisyConditionForCheckingIfEdgeConnectionIsPlausible}
@@ -504,118 +573,203 @@ To extend to the noisy case, we must expand the allowed region to account for ou
 
 \end{algo}
 
-We have the following guarantee that Algorithm \ref{algo:polygonalizationNoisy} works. This result closely follows the proof of Theorem \ref{thm:proofOfAlgo}, and is given in Appendix \ref{sec:proofOfNoisyReconstruction}.
+The following theorem
+guarantees that Algorithm \ref{algo:polygonalizationNoisy} works.
+The proof follows that of Theorem \ref{thm:proofOfAlgo}
+and is given in Appendix \ref{sec:proofOfNoisyReconstruction}.
 
 \begin{theorem}
   \label{thm:noisyReconstruction}
-  Suppose that Assumptions \ref{ass:curvature}, \ref{ass:separation} and \ref{ass:minSamplingRateNoisy} hold. Suppose also that:
+  Suppose that Assumptions \ref{ass:curvature}, \ref{ass:separation} and \ref{ass:minSamplingRateNoisy} hold. Suppose also that
   \begin{subequations}
     \label{eq:noisySeparationConditions}
     \begin{equation}
       \label{eq:noisySeparationDistance}
-      \curvesep > 4 \pointNoise + 4 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2}
+      \curvesep > 4 \pointNoise + 4 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2} \, ,
     \end{equation}
     \begin{equation}
       \label{eq:noisyConstraintOnkmaxEpsilon}
-      \epsilon < \frac{1}{ \curvemax \sqrt{2}}
+      \epsilon < \frac{1}{ \curvemax \sqrt{2}} \, .
     \end{equation}
   \end{subequations}
-  In that case, Algorithm \ref{algo:polygonalizationNoisy} correctly reconstructs the figure.
+  Then, Algorithm \ref{algo:polygonalizationNoisy} correctly reconstructs
+the figure.
 \end{theorem}
 
 //NEED FIGURES SHOWING THIS WORKS
 
-\subsection{Cleaning up the noise: why context matters}
-
-Consider a point $\vp$, which is a noisy sample from some curve in the figure. Due to the noise, all we can say apriori is that $\vp$ is close to the true sample $\vp'$, i.e. $\vp \in \ball{\pointNoise}{\vp}$.
-
-However, given knowledge that the polygonalization contains the edges $(\vq,\vp)$ and $(\vp,\vr)$, we can obtain further information on $\vp'$. We know that $\vp' \in \ball{\pointNoise}{\vp}$, but we also know that $\vp' \in \nallowed{\epsilon}{\vq}$ and similarly $\vp' \in \nallowed{\epsilon}{\vr}$. Thus:
+\begin{remark}
+Consider a point $\vp$, which is a noisy sample from some curve in the figure.
+All we can say a priori is that $\vp$ is close to the true
+sample $\vp_{\ast}$, i.e. $\vp \in \ball{\pointNoise}{\vp_{\ast}}$.
+However, given the knowledge that the polygonalization contains
+the edges $(\vq,\vp)$ and $(\vp,\vr)$, we can obtain further information
+on $\vp_{\ast}$. Not only does $\vp_{\ast}$ line in $\ball{\pointNoise}{\vp}$,
+but $\vp_{\ast} \in \nallowed{\epsilon}{\vq}$ and
+$\vp_{\ast} \in \nallowed{\epsilon}{\vr}$. In short,
 \begin{equation}
   \label{eq:noisyFilteringFromAllowedRegions}
-  \vp' \in \ball{\pointNoise}{\vp} \cap \nallowed{\epsilon}{\vq} \cap  \nallowed{\epsilon}{\vr}
+  \vp_{\ast} \in \ball{\pointNoise}{\vp} \cap \nallowed{\epsilon}{\vq} \cap  \nallowed{\epsilon}{\vr}
 \end{equation}
-We can then improve our approximation to $\vp'$ by minimizing the worst case error,
+We can therefore improve our approximation to $\vp_{\ast}$ by minimizing
+either the worst case error,
 \begin{subequations}
   \begin{equation}
     \vp^{new} = \textrm{argmin}_{\vp}  \sup_{\vx \in A} \abs{\vp - \vx}, ~ A = \ball{\pointNoise}{\vp} \cap \nallowed{\epsilon}{\vq} \cap  \nallowed{\epsilon}{\vr}
   \end{equation}
-  the mean error,
+  or the mean error,
   \begin{equation}
     \vp^{new} = \textrm{argmin}_{\vp}  \int_{A} \abs{\vp - \vx} d\vx
   \end{equation}
 \end{subequations}
-or other error functionals (depending on the particular application). Noise in the tangential data can be similarly reduced. Since this is not necessary for polygonalization,  we will not expand further on this, but we consider the possibility to be worth mentioning.
+or some application-dependent functional.
+Noise in the tangential data can be similarly reduced.
+This is a postprocessing matter after polygonalization,
+and we will not expanded further on this idea in the present paper.
+\end{remark}
 
 \section{Examples}
 
-\subsection{Hiding behind tree branches}
+\subsection{Figure detection}
 
-//SOUHEIL MENTIONED THIS EXAMPLE. NEED REFERENCES.//
-
-Anyone who has played the game ``Hide and Seek'' knows that playing the role of seeker is more difficult in the summer than in the fall. This is because in the summer, trees have full foliage, which can completely block view of the hider. In the fall, this strategy no longer works, since trees lose their leaves. However, if the seeker is a robot, the strategy may still work; the bare branches can make it difficult to recognize the hider.
-
-As a model of this problem\footnote{In particular, we are attempting to model the image after applying directional edge detectors to it, thus resulting in a set of points and tangents.}, we constructed a figure, and obscured it by placing it behind a sequence of lines. Algorithm \ref{algo:polygonalization} succesfully reconstructs the figure (the red oval), as well as properly connecting points on the horizontal and vertical ``branches''. The result is shown in Figure \ref{fig:obscuredExample}. Note that the branches are not connected to the oval (or each other).
+A natural problem in various computer vision applications is that of
+recognizing sampled objects that are partially obscured by a
+complex foreground.
+As a model of this problem, we constructed an (oval)
+figure, and obscured it by covering it with a sequence of curves.
+Algorithm \ref{algo:polygonalization} succesfully reconstructs the
+figure, as well as properly connecting points on the
+horizontally and vertically oriented covering curves.
+The result is shown in
+Figure \ref{fig:obscuredExample}. Note that the branches are not
+connected to the oval (or each other).
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{obscured_figure.eps}
-
-\caption{A figure which is partially obscured. Algorithm \ref{algo:polygonalization} correctly computes it's polygonalization, and distinguishes it from the curves in front of it. To avoid visual clutter, the tangents are not displayed in this figure.}
+\caption{A figure which is partially obscured.
+Algorithm \ref{algo:polygonalization} correctly computes its
+polygonalization, and distinguishes it from the curves in front of it.
+To avoid visual clutter, the tangents are not displayed in this figure.}
 \label{fig:obscuredExample}
 \end{figure}
 
+\begin{remark}
+Our work on curve reconstruction was, in fact, motivated by this
+problem. In various imaging applications (particularly magnetic
+resonance imaging), it may be possible to use directional edge
+detectors to extract both point and tangent information about
+structures of interest.
+\end{remark}
+
 \subsection{Filtering spurious points}
 
-The method provided here is relatively robust with regard to the addition of spurious random data points. This is because spurious data points are highly unlikely to be connected to any other points in the polygonalization graph.
+The method provided here is relatively robust with regard to the
+addition of spurious random data points. This is because spurious data
+points are highly unlikely to be connected to any other points in the
+polygonalization graph. To see this, note
+first that for an incorrect data point to be connected to part of the
+polygonalization at all, it would need to be located in
+$\allowed{\epsilon}{\vp}$ for some $\vp$.
+This is a region of length $O(\epsilon)$ and width $O(\epsilon^{2})$.
+There are approximately $L = \sum_{j} \textrm{arclength}(\gamma_{j})$
+such points, for a total volume of $\epsilon^{2} L$. Thus, the probability
+that a spurious point is in \emph{some} allowed region is roughly
+$O(L \epsilon^{2})$.
 
-This occurs for two primary reasons. First, for an incorrect data point to be connected to part of the polygonalization at all, it would need to be located in $\allowed{\epsilon}{\vp}$ for some $\vp$. This is a region of length $O(\epsilon)$ and width $O(\epsilon^{2})$. There are approximately $L = \sum_{j} \textrm{arclength}(\gamma_{j})$ such points, for a total volume of $\epsilon^{2} L$. Thus, the probability that a spurious point is in \emph{some} allowed region is roughly $O(L \epsilon^{2})$.
-
-The second reason is that even if a spurious point is in some allowed region, it is unlikely to point in the correct direction. If an erroneous point $\vq$ is inside $\allowed{\epsilon}{\vp}$, it is still not likely that $\vp \in \allowed{\epsilon}{\vq}$; this follows because the tangent at $\vq$ must point in the direction of $\vp$ (with error proportional to $\epsilon^{2}$, the angular width of $\allowed{\epsilon}{\vq}$). Thus, the probability that the tangent at $\vq$ points towards $\vp$ is $O(\epsilon^{2}/2\pi)$.
-
-Based on these arguments, the probability that any \emph{randomly chosen} spurious point $\vq$ is connected to any other point in the polygonalization is $O(L \epsilon^{4})$.
+The second reason is that even if a spurious point is in some allowed region,
+it is unlikely to point in the correct direction.
+If an erroneous point $\vq$ is inside $\allowed{\epsilon}{\vp}$, it is
+still not likely that $\vp \in \allowed{\epsilon}{\vq}$, since
+the tangent at $\vq$ must point in the direction of $\vp$
+(with error proportional to $\epsilon^{2}$, the angular width of
+$\allowed{\epsilon}{\vq}$). Thus, the probability that the tangent at
+$\vq$ points towards $\vp$ is $O(\epsilon^{2}/2\pi)$.
+Combining these arguments, the probability that any \emph{randomly chosen}
+spurious point $\vq$ is connected to any other point in the
+polygonalization is $O(L \epsilon^{4})$.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{noisy_example.eps}
-
-\caption{The same example as in Figure \ref{fig:basicExample}, but with 100 additional points (for a total of $196$), placed randomly. }
+\caption{The same example as in Figure \ref{fig:basicExample}, but with
+100 additional points (for a total of $196$), placed randomly. }
 \label{fig:noisyExample}
 \end{figure}
 
-\subsubsection{Noise Removal by Connecting the Dots}
+\subsubsection{Filtering the data}
 
-The aforementioned criteria suggest that our ``connect the dots'' algorithm has excellent potential for noise removal. It suggests that if we remove points which do not have edges pointing towards other edges, then with high probability we are removing spurious edges.
+The aforementioned criteria suggest that our reconstruction algorithm
+has excellent potential for noise removal. It suggests that if we
+remove points which do not have edges pointing towards other edges,
+then with high probability we are removing spurious edges.
 
-In fact, this is born out in practice. By running Algorithm \ref{algo:polygonalization} on a figure consisting of $96$ true points, and $100$ randomly placed incorrect points, a nearly correct polygonalization is calculated; this is shown in Figure \ref{fig:noisyExample}. The original curve is reconstructed with an error at only one point (the top left corner of the red line).
+This notion is well supported in practice.
+By running Algorithm \ref{algo:polygonalization} on a figure consisting of
+$96$ true points, and $100$ randomly placed incorrect points, a nearly
+correct polygonalization is calculated (Fig. \ref{fig:noisyExample}).
+The original curve is reconstructed with an error at only one point
+(the top left corner of the right-hand curve).
 
-Of course, if enough incorrect points are present, eventually some points will be connected by Algorithm \ref{algo:polygonalization}. This can be seen in Figure \ref{fig:noisyExample}: the black line near $(0.9, -0.2)$ is an edge between two incorrect points. However, spurious edge formations such as this are small in number, and do not usually look like part of the figure.
+Of course, if enough incorrect points are present, some points will
+eventually be connected by Algorithm \ref{algo:polygonalization}.
+This can be seen in Figure \ref{fig:noisyExample}:
+the line segment near $(0.9, -0.2)$ is an edge between two incorrect points.
+One hint that an edge is incorrect is that it points to a leaf.
+That is, consider a set of vertices $\vp_{0}, \vp_{1}, \ldots, \vp_{n}$
+as well as $\vq$. Suppose, after approximately computing the
+polygonalization, one finds that the graph contains edges
+$e_{0} = (\vp_{0}, \vp_{1}), e_{1} = (\vp_{1}, \vp_{2}), \ldots, e_{n-1} =
+(\vp_{n-1}, \vp_{n})$ and $e_{n} = (\vp_{n/2}, \vq)$. The vertex $\vq$ is
+a leaf, that is it is reachable by only one edge. A polygonalization
+of a set of closed curves should not have leaves, suggesting that the
+edge $e_{n}$ is spurious.
+Thus filtering leaves is a very reasonable heuristic for noise filtering.
 
-One hint that an edge is incorrect is if it points to a leaf. That is, consider a set of vertices $\vp_{0}, \vp_{1}, \ldots, \vp_{n}$ as well as $\vq$. Suppose, after approximately computing the polygonalization, one finds that the graph contains edges $e_{0} = (\vp_{0}, \vp_{1}), e_{1} = (\vp_{1}, \vp_{2}), \ldots, e_{n-1} = (\vp_{n-1}, \vp_{n})$ and $e_{n} = (\vp_{n/2}, \vq)$. The vertex $\vq$ is a leaf, i.e. it is reachable by only one edge. A polygonalization should not have leaves, suggesting that the edge $e_{n}$ should not be present. This suggests that by filtering leaves, we can remove primarily noise while leaving the signal undamaged.
+One final problem with noisy data worth mentioning is that sometimes,
+an incorrect point will be present that lies within the allowed
+region of a legitimate point, and closer to the legitimate point
+than the adjacent points along the curve. This will prevent the
+correct edge from being added. This can be remedied by adding not
+only $\vr_{i}^{\pm}$ at Step 3 of the algorithm, but also points for
+which $d_{\vm^{\perp}}(\vp_{i})$ whose distance to $\vp_{i}$ is not
+much longer than the distance between $\vp_{i}$ and $\vr_{i}^{\pm}$.
+With some luck, this procedure combined with filtering out leaves
+will approximately reconstruct the correct figure.
 
-An additional problem with noisy data is that sometimes, an incorrect point will be present, in the allowed region of a legitimate point, and closer to the legitimate point than the adjacent points along the curve. This will prevent the correct edge from being added. This can be remedied by adding not only $\vr_{i}^{\pm}$ at Step 3 of the algorithm, but also points for which $d_{\vm^{\perp}}(\vp_{i})$who's distance to $\vp_{i}$ is not much longer than the distance between $\vp_{i}$ and $\vr_{i}^{\pm}$. With some luck, this procedure combined with filtering out leaves will approximately reconstruct the correct figure.
+\vspace{.2in}
 
-Thus, we arrive at are noisy polygonalization algorithm.
-
+\hrule
 \begin{algo}
   \label{algo:noisyPolygonalization}
-  {\bf Polygonalization Algorithm with Noise Removal }
+  \begin{center}
+  {\bf (Polygonalization with Noise Removal)}
+  \end{center}
 
-  { \bf Input: }
+\vspace{.1in}
 
-  \begin{itemize}
-  \item The maximal curvature, $\curvemax$.
-  \item A parameter $\epsilon$ satisfying $\epsilon \curvemax < 2^{-1/2}$ and $2 \curvemax \epsilon^{2} < \curvesep$.
-  \item The data $\pointData$ and $\tanData$, which include spurious data. We assume that points adjacent on a given curve have a distance shorter than $\epsilon$ between them, i.e. the curve is $\epsilon$-sampled.
-  \item A leaf removal count, $l \in \mathbb{Z}^{+}$.
-  \item A threshold $\alpha \geq 1$.
-  \end{itemize}
+\hrule
 
+\vspace{.2in}
 
-  {\bf Algorithm: }
+\noindent { \bf Input: }
+
+[ We assume we are given the dataset $\allData$ (which includes spurious data),
+the maximal curvature
+$\curvemax$, the noise amplitudes $\pointNoise, \tanNoise$, and a
+parameter $\epsilon$ satisfying both $\epsilon \curvemax < 1/\sqrt{2}$ and
+$2 \curvemax \epsilon^{2} < \curvesep$.
+We assume that adjacent points on a given curve
+are less than a distance $\epsilon$ apart, i.e. the curve is
+$\epsilon$-sampled. We also assume we are given the number of
+leaf removal sweeps $l \in \mathbb{Z}^{+}$ and a
+threshold $\alpha \geq 1$. ]
+
+\vspace{.1in}
 
   \begin{enumerate}
   \item Compute the graph $G = (\pointData, E)$ with edge set:
@@ -646,28 +800,44 @@ Thus, we arrive at are noisy polygonalization algorithm.
   \end{enumerate}
 \end{algo}
 
-In practice, we have found $\alpha=1.1$ and $l=4$ work reasonably well. Figure \ref{fig:moreNoisyExample} illustrates the result of Algorithm \ref{algo:noisyPolygonalization}, both with and without filtering.
+In practice, we have found that $\alpha=1.1$ and
+$l=4$ work reasonably well.
+Figure \ref{fig:moreNoisyExample} illustrates the result of Algorithm
+\ref{algo:noisyPolygonalization}, both with and without filtering.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
 \sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
 \includegraphics[scale=0.5]{more_noisy_example.eps}
-
-\caption{The same example as in Figure \ref{fig:basicExample}, but with 2000 additional random points added (for a total of 2096). The original curve is no longer completely reconstructed, but the general shape is still roughly visible, along with many more spurious points. Filtering leaves with $l=4$ improves the situation considerably.}
-\label{fig:moreNoisyExample}
+\caption{The same example as in Figure \ref{fig:basicExample}, but with
+2000 additional random points added (for a total of 2096).
+The original curve is no longer completely reconstructed, but the
+general shape is still roughly visible, along with many more spurious
+points. The middle figure shows the reconstruction
+without Step 4 of Algorithm 3. Filtering leaves with $l=4$ improves
+the situation considerably (bottom figure).
+\label{fig:moreNoisyExample}}
 \end{figure}
 
 \appendix
 
 \section{Proof of Theorem \ref{thm:noisyReconstruction}}
 \label{sec:proofOfNoisyReconstruction}
-The proof of Theorem \ref{thm:noisyReconstruction} follows that of Theorem \ref{thm:proofOfAlgo} almost exactly, with minor modifications made to account for the noise.
-
-To begin, we need to show that the noisy allowed region is large enough to separate distinct curves. It is here that we use \eqref{eq:noisySeparationDistance}.
+The proof of Theorem \ref{thm:noisyReconstruction} follows that of
+Theorem \ref{thm:proofOfAlgo} closely, with minor modifications
+made to account for the noise.
+To begin, we need to show that the noisy allowed region is large enough
+to separate distinct curves. It is here that we use
+\eqref{eq:noisySeparationDistance}.
 
 \begin{proposition}
-  Let $i \neq j$ and assume that \eqref{eq:noisySeparationConditions} holds. Then $\ball{\pointNoise}{\vp_{i}} \cap \nallowed{\epsilon}{\vp_{j}} = \emptyset$ unless $\vp_{i}$ and $\vp_{j}$ are samples from the same curve, and are separated by an arc length no larger than $\curvemaxi \pi/2$.
+  Suppose $i \neq j$ and assume that
+  \eqref{eq:noisySeparationConditions} holds.
+  Then $\ball{\pointNoise}{\vp_{i}} \cap
+  \nallowed{\epsilon}{\vp_{j}} = \emptyset$ unless $\vp_{i}$ and $\vp_{j}$
+  are samples from the same curve, and are separated by an arc length no
+  larger than $\curvemaxi \pi/2$.
 \end{proposition}
 
 \begin{proof}
@@ -779,7 +949,97 @@ If a node of the tree at this scale has multiple points, we store them in a list
 
 //EXPLAIN HOW TO USE DATA STRUCTURE TO SPEED UP ALGORITHM//
 
-\bibliography{../stucchio}
 \bibliographystyle{hplain}
+\begin{thebibliography}{99}
 
+\bibitem{882320}
+Bart Adams and Philip Dutr\'{e}.
+\newblock Interactive boolean operations on surfel-bounded solids.
+\newblock {\em ACM Trans. Graph.}, 22(3):651--656, 2003.
+
+\bibitem{1103907}
+Marc Alexa, Markus Gross, Mark Pauly, Hanspeter Pfister, Marc Stamminger, and
+  Matthias Zwicker.
+\newblock Point-based computer graphics.
+\newblock In {\em SIGGRAPH '04: ACM SIGGRAPH 2004 Course Notes}, page~7, New
+  York, NY, USA, 2004. ACM.
+
+\bibitem{amenta98crust}
+N.~Amenta, M.~Bern, and D.~Eppstein.
+\newblock The crust and the $\beta$-skeleton: Combinatorial curve
+  reconstruction.
+\newblock {\em Graphical models and image processing: GMIP}, 60(2):125, 1998.
+
+\bibitem{amenta98new}
+Nina Amenta, Marshall Bern, and Manolis Kamvysselis.
+\newblock A new {Voronoi}-based surface reconstruction algorithm.
+\newblock {\em Computer Graphics}, 32({Annual Conference Series}):415--421,
+  1998.
+
+\bibitem{amenta02simple}
+Nina Amenta, Sunghee Choi, Tamal~K. Dey, and N.~Leekha.
+\newblock A simple algorithm for homeomorphic surface reconstruction.
+\newblock {\em International Journal of Computational Geometry and
+  Applications}, 12(1-2):125--141, 2002.
+
+\bibitem{598521}
+Rodrigo~L. Carceroni and Kiriakos~N. Kutulakos.
+\newblock Multi-view scene capture by surfel sampling: From video streams to
+  non-rigid 3d motion, shape and reflectance.
+\newblock {\em Int. J. Comput. Vision}, 49(2-3):175--214, 2002.
+
+\bibitem{chengnoise}
+Siu-Wing Chen, Stefan Funke, Mordecai Golin, Piyush Kumar,
+Sheung-Hung Poon, and Edgar Ramos.
+\newblock Curve reconstruction from noisy samples.
+\newblock {\em Comput. Geometry}, 31:63--100, 2005.
+
+\bibitem{dey99curve}
+Tamal~K. Dey, Kurt Mehlhorn, and Edgar~A. Ramos.
+\newblock Curve reconstruction: Connecting dots with good reason.
+\newblock In {\em Symposium on Computational Geometry}, pages 197--206, 1999.
+
+\bibitem{dey01reconstructing}
+Tamal~K. Dey and Rephael Wenger.
+\newblock Reconstructing curves with sharp corners.
+\newblock {\em Computational Geometry}, 19(2--3):89--99, 2001.
+
+\bibitem{edelsbrunner}
+Herbert Edelsbrunner.
+\newblock Shape reconstruction with Delaunay complex.
+\newblock In {\em LATIN '98: Theoretical Informatics}, Lecture Notes
+in Computer Science, 1380, Springer-Verlag, 119--32, 1998.
+
+\bibitem{hoppe92surface}
+Hugues Hoppe, Tony DeRose, Tom Duchamp, John McDonald, and Werner Stuetzle.
+\newblock Surface reconstruction from unorganized points.
+\newblock {\em Computer Graphics}, 26(2):71--78, 1992.
+
+\bibitem{1018057}
+Thouis~R. Jones, Fredo Durand, and Matthias Zwicker.
+\newblock Normal improvement for point rendering.
+\newblock {\em IEEE Comput. Graph. Appl.}, 24(4):53--56, 2004.
+
+\bibitem{mdnoise}
+Asisn Mukhopadhyay and Augustus Das.
+\newblock Curve reconstruction in the presence of noise.
+\newblock In {\em CGIV 2007: 4th International Conference on
+Computer Graphics, Imaging and Visualization}, pp. 177--182,
+IEEE Compuer Society, 2007.
+
+\bibitem{344936}
+Hanspeter Pfister, Matthias Zwicker, Jeroen van Baar, and Markus Gross.
+\newblock Surfels: surface elements as rendering primitives.
+\newblock In {\em SIGGRAPH '00: Proceedings of the 27th annual conference on
+  Computer graphics and interactive techniques}, pages 335--342, New York, NY,
+  USA, 2000. ACM Press/Addison-Wesley Publishing Co.
+
+\bibitem{383300}
+Matthias Zwicker, Hanspeter Pfister, Jeroen van Baar, and Markus Gross.
+\newblock Surface splatting.
+\newblock In {\em SIGGRAPH '01: Proceedings of the 28th annual conference on
+  Computer graphics and interactive techniques}, pages 371--378, New York, NY,
+  USA, 2001. ACM.
+
+\end{thebibliography}
 \end{document}
