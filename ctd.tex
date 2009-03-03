@@ -596,7 +596,14 @@ and is given in Appendix \ref{sec:proofOfNoisyReconstruction}.
 the figure.
 \end{theorem}
 
-//NEED FIGURES SHOWING THIS WORKS
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.50]{noisy_reconstruction.eps}
+\caption{Noisy sampled points, and the reconstruction by Algorithm \ref{algo:polygonalizationNoisy}. This example takes $\curvemax=5$, $\epsilon=0.15$, $\pointNoise=\tanNoise=0.01$. }
+\label{fig:noisyreconstruction}
+\end{figure}
 
 \begin{remark}
 Consider a point $\vp$, which is a noisy sample from some curve in the figure.
