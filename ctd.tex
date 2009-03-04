@@ -86,6 +86,9 @@
 
 \newcommand{\nallowed}[2]{ { A^{\pointNoise, \tanNoise}_{#1}(#2) } }
 
+\newcommand{\densitymax}{{\rho_{m}}}
+
+
 \begin{document}
 
 \title{Reconstructing Curves from Points and Tangents}
@@ -950,11 +953,65 @@ for some $y \in [0,\curvemaxi]$. If $\curvemax y < 1/\sqrt{2}$ (i.e. \eqref{eq:c
 \section{Speeding it up: an $O(N \log N)$ algorithm}
 \label{sec:quadTreeSection}
 
-As remarked earlier, Algorithm \ref{algo:polygonalization} runs in $O(N^{2})$ time as written. This can be remedied by using a spatially adaptive data structure. We propose the following data structure, which encapsulates naturally the geometry of our algorithm. We store the point/tangent pairs, $(\vp_{i},\vm_{i})$ in a quad-tree (sorted by $\vp_{i}$) which extends down to the scale $\min\{ \curvesep / 4, \curvemaxi / \sqrt{2} \}$. Making this scale smaller than $\delta$ is done to ensure that leaves can intersect only a single curve $\gamma$ in the figure $\curveSet$.
+As remarked earlier, Algorithm \ref{algo:polygonalization} and \ref{algo:polygonalizationNoisy} run in $O(N^{2})$ time as written. The slow step is Step 1 which involves comparing every point/tangent pair to every other such pair. This scaling issue can be remedied by using a spatially adaptive data structure.
 
-If a node of the tree at this scale has multiple points, we store them in a list which is sorted in the following way. We select a point at random on this node, call it $(\vp_{0},\vm_{0})$. The list is sorted according to the function $\vp_{i} \mapsto (\vp_{i} - \vp_{0}) \cdot \vm_{0}$. By our choice of the leaf size, only points coming from a single curve $\gamma \in \curveSet$ are contained in this node. Now, recalling the argument used in the proof of Lemma \ref{lem:closestTangentPointInAllowedRegionIsCorrect}, we find that near $\vp_{0}$, $\gamma(t)$ admits a parameterization of the form $\gamma(t)=\vp_{0} + \vm_{0} t + f(t) \vm_{0}^{\perp}$. This implies that sorting according to the function $(\vp_{i} - \vp_{0}) \cdot \vm_{0}$ will sort points according to their position on the curve $\gamma(t)$. We chose for the scale of leaf nodes to be smaller than $\curvemaxi / \sqrt{2}$ in order for this local parameterization to be valid.
+A caveat: there are two different ways of increasing $N$. The first (increasing outward) is by taking larger figures, with the sampling rate held fixed. The second (increasing inward) is by holding the figure size fixed, but increasing the sampling rate. We are interested primarily in the first case, and we will treat this case only. Therefore, we make the following additional assumption:
 
-//EXPLAIN HOW TO USE DATA STRUCTURE TO SPEED UP ALGORITHM//
+\begin{assumption}
+  \label{ass:sampleDensity}
+  We assume that the density of points in the input data is bounded above, i.e.:
+  \begin{equation}
+    \sup_{B} \frac{
+      \abs{ \pointData \cap B }
+    }{
+      \abs{B}
+    } \leq \densitymax
+  \end{equation}
+\end{assumption}
+
+Note that this always holds in the case of noisy data. In this case, Assumption \ref{ass:minSamplingRateNoisy} combined with \eqref{eq:noisySeparationConditions} implies that
+\begin{equation*}
+  \densitymax \leq \frac{1}{ (1+2^{3/2})(2 \tanNoise + \pointNoise) \curvesep} \leq
+  \frac{1}{ (1+2^{3/2})(2 \tanNoise + \pointNoise) (4 \pointNoise + 4 \epsilon \tanNoise + 2.1 \curvemax \epsilon^{2})}.
+\end{equation*}
+
+In computing Step 1 of Algorithm \ref{algo:polygonalization} or \ref{algo:polygonalizationNoisy}, we must determine whether two points are in each other's allowed region (or a ball of radius $\pointNoise$ about the noisy allowed region). Note that $\allowed{\epsilon}{\vp_{i}} \subset B_{\epsilon}(\vp_{i})$, so if $\abs{\vp_{i} - \vp_{j}} \geq \epsilon$, then clearly the edge $(\vp_{i},\vp_{j}) \nin G$. Similarly, for the noisy case, if $\abs{\vp_{i} - \vp_{j}} \geq \epsilon+2\pointNoise$, then $(\vp_{i},\vp_{j}) \nin G$. We exploit this fact by using quadtrees, which allow us to avoid comparing points more than a distance $\epsilon$ apart.
+
+\vspace{.2in}
+
+\hrule
+\begin{algo}
+  \label{algo:polygonalization}
+  \begin{center} {\bf (Fast Computation of the Graph G)}
+  \end{center}
+
+\vspace{.1in}
+
+\hrule
+
+\vspace{.2in}
+
+\noindent { \bf Input: }
+[ We assume we are given the dataset $\allData$, the maximal point density $\densitymax$ and the sampling $\epsilon$. We also take the parameter $\lambda=\epsilon$ (noise free case) or $\lambda=\epsilon+2\pointNoise$ (noisy case). ]
+
+\vspace{.1in}
+
+  \begin{enumerate}
+  \item Compute a quadtree $Q$ storing $(\vp_{i},\vm_{i})$ pairs. The splitting criteria for a node is when the node contains more than $\densitymax \lambda^{2}$ points.
+  \item Initialize the graph $G = (\pointData, E)$ with empty edge set.
+  \item For each point $\vp_{i}$, iterate over the points $\vp_{j}$ contained in the node containing $\vp_{i}$ and all of it's nearest neighbors. If
+    \begin{equation*}
+      \vp_{i} \in \allowed{\epsilon}{\vp_{j}} \textrm{~and~} \vp_{j} \in \allowed{\epsilon}{\vp_{i}},
+    \end{equation*}
+    then add the edge $(\vp_{i},\vp_{j})$ to the graph $G$.
+  \item Return $G$.
+  \end{enumerate}
+\end{algo}
+Initializing the quadtree in step 1 is an $O(N \log N)$ operation. Assumption \ref{ass:sampleDensity} implies that the width of a node will be no smaller than $\lambda$; thus, a node containing a point $\vp_{i}$ together with it's nearest neighbors contains the allowed region. The comparison at step 3 involves at most $\densitymax \lambda^{2}$ points, regardless of $N$. Thus, the complexity of this algorithm is
+\begin{equation}
+  O(N \log(N) + N \densitymax \lambda^{2}).
+\end{equation}
+
 
 \bibliographystyle{hplain}
 \begin{thebibliography}{99}
@@ -1047,6 +1104,11 @@ Matthias Zwicker, Hanspeter Pfister, Jeroen van Baar, and Markus Gross.
 \newblock In {\em SIGGRAPH '01: Proceedings of the 28th annual conference on
   Computer graphics and interactive techniques}, pages 371--378, New York, NY,
   USA, 2001. ACM.
+
+\bibitem{quadtrees}
+Raphael Finkel and J.L. Bentley.
+\newblock Quad Trees: A Data Structure for Retrieval on Composite Keys
+\newblock In {\em Acta Informatica}, 4 (1): 1–9, 1974 doi:10.1007/BF00288933.
 
 \end{thebibliography}
 \end{document}
