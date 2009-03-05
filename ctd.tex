@@ -640,6 +640,23 @@ and we will not expanded further on this idea in the present paper.
 
 \section{Examples}
 
+\subsection{Extracting Topology from MRI images}
+
+In Magnetic Resonance Imaging (MRI), the MRI device performs a physical two-dimensional Fourier transform of slices of a patient's body. That is, if $\rho(x)$ is the density distribution of a certain slice of a patient, then the MRI returns the data $\hat{\rho}(k)$ at various points $k$. However, the number of sample points available is limited, so it is desirable to make use of the limited information as best as possible.
+
+A method we are currently developing for this problem involves making the assumption that $\rho(x)$ is piecewise continuous. The problem of reconstruction can then be decomposed into finding and reconstructing the edges (discontinuities), and reconstructing the smooth remainder. The filtered DFT is sufficient to reconstruct the smooth remainder, so the only problem is reconstructing the edges.
+
+Using directional edge detectors on the Fourier-domain data, we can extract a set of points on the edges together with unoriented normals.  By means of Algorithm \ref{algo:polygonalizationNoisy}, we can reconstruct the topology of the edge set. Given this data, we can reconstruct the edges and henceforth the discontinuous part of the image. The details of this algorithm are beyond the scope of this article, but Figure \ref{fig:mriExample} illustrates the idea behind the method. Our work on curve reconstruction was motivated by this application.
+
+\begin{figure}
+\setlength{\unitlength}{0.240900pt}
+\ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi
+\sbox{\plotpoint}{\rule[-0.200pt]{0.400pt}{0.400pt}}%
+\includegraphics[scale=0.5]{mri_edges.eps}
+\caption{A simulated MRI image. The original image was two circles, together with some low frequency ``texture''. The noise level is 5\%.}
+\label{fig:mriExample}
+\end{figure}
+
 \subsection{Figure detection}
 
 A natural problem in various computer vision applications is that of
@@ -665,14 +682,6 @@ polygonalization, and distinguishes it from the curves in front of it.
 To avoid visual clutter, the tangents are not displayed in this figure.}
 \label{fig:obscuredExample}
 \end{figure}
-
-\begin{remark}
-Our work on curve reconstruction was, in fact, motivated by this
-problem. In various imaging applications (particularly magnetic
-resonance imaging), it may be possible to use directional edge
-detectors to extract both point and tangent information about
-structures of interest.
-\end{remark}
 
 \subsection{Filtering spurious points}
 
