@@ -176,7 +176,7 @@ This assumption is necessary to prevent the curves from oscillating too much bet
   (assuming the curve $\gamma_{i}(t)$ proceeds with unit speed).
 \end{assumption}
 
-This assumption ensures that two distinct curves do not come too close
+These assumptions ensure that two distinct curves do not come too close
 together (\ref{ass:curvature})  and that separate regions of
 the same curve do not come
 arbitrarily close (\ref{ass:separation}).
@@ -399,14 +399,24 @@ Substituting this into \eqref{eq:1} yields:
   d(\vq,L) \leq
   2 \curvemaxi \sin^{2}( \sqrt{2} \curvemax \epsilon/2) \leq \curvemax \epsilon^{2}
 \end{equation}
-
 Thus, the \emph{normal} distance between any point in $\allowed{\epsilon}{\vp}$ and $L$ is $O(\curvemax \epsilon^{2})$.
 
-If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$, then clearly $\gamma_{j}(t') \nin \allowed{\epsilon}{\gamma_{i}(t)}$ so we assume $\gamma_{j}(t') \in L+\vm^{\perp} \RR$. In this case, $\gamma_{j}(t') = \vp + \vm \curvemaxi \sin(\theta_{0}) + \vm^\perp z$, with $z \in \RR$ the normal (relative to $L$) distance to $L$.
-
+If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$, 
+then clearly $\gamma_{j}(t') \nin \allowed{\epsilon}{\gamma_{i}(t)}$ 
+so we assume $\gamma_{j}(t') \in L+\vm^{\perp} \RR$. In this case, 
+$\gamma_{j}(t') = \vp + \vm \curvemaxi \sin(\theta_{0}) + \vm^\perp z_j$ 
+for some $\theta_0 \in 
+[-\arcsin(\epsilon \curvemax),\arcsin(\epsilon \curvemax)]$
+and $z_j \in \RR$.
+Thus, $|z_j| = d_{\vm^{\perp}}(\gamma_{j}(t'), L)$,
+the normal distance to $L$. By construction, there is a unique
+value $t_i'$ such that
+$\gamma_{i}(t_i') = \vp + \vm \curvemaxi \sin(\theta_{0}) + \vm^\perp z_i$.
+$|z_i|$ then equals $d_{\vm^{\perp}}(\gamma_{i}(t), L)$.
 By the second triangle inequality,
 \begin{equation*}
-  d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \abs{d_{\vm^{\perp}}(\gamma_{j}, \gamma_{i}) -  d_{\vm^{\perp}}(\gamma_{i}, L)}
+  d_{\vm^{\perp}}(\gamma_{j}(t'), L)  = |z_j|
+  \geq \abs{|z_j - z_i| - |z_i|}
   \geq \delta - \curvemax \epsilon^{2} > \curvemax \epsilon^{2}
 \end{equation*}
 But this implies that $d(\gamma_{j}(t'), L) \geq d_{\vm^{\perp}}(\gamma_{j}(t'), L) \geq \curvemax \epsilon^{2}$, and thus $\gamma_{j}(t') \nin \allowed{\epsilon}{\vp}$.
@@ -580,6 +590,7 @@ The following theorem
 guarantees that Algorithm \ref{algo:polygonalizationNoisy} works.
 The proof follows that of Theorem \ref{thm:proofOfAlgo}
 and is given in Appendix \ref{sec:proofOfNoisyReconstruction}.
+An application is shown in Fig. \ref{fig:noisyreconstruction}.
 
 \begin{theorem}
   \label{thm:noisyReconstruction}
@@ -614,7 +625,7 @@ All we can say a priori is that $\vp$ is close to the true
 sample $\vp_{\ast}$, i.e. $\vp \in \ball{\pointNoise}{\vp_{\ast}}$.
 However, given the knowledge that the polygonalization contains
 the edges $(\vq,\vp)$ and $(\vp,\vr)$, we can obtain further information
-on $\vp_{\ast}$. Not only does $\vp_{\ast}$ line in $\ball{\pointNoise}{\vp}$,
+on $\vp_{\ast}$. Not only does $\vp_{\ast}$ lie in $\ball{\pointNoise}{\vp}$,
 but $\vp_{\ast} \in \nallowed{\epsilon}{\vq}$ and
 $\vp_{\ast} \in \nallowed{\epsilon}{\vr}$. In short,
 \begin{equation}
@@ -642,11 +653,41 @@ and we will not expanded further on this idea in the present paper.
 
 \subsection{Extracting Topology from MRI images}
 
-In Magnetic Resonance Imaging (MRI), the MRI device performs a physical two-dimensional Fourier transform of slices of a patient's body. That is, if $\rho(x)$ is the density distribution of a certain slice of a patient, then the MRI returns the data $\hat{\rho}(k)$ at various points $k$. However, the number of sample points available is limited, so it is desirable to make use of the limited information as best as possible.
+In its simplest version, Magnetic Resonance Imaging (MRI) is
+used to obtain the 
+two-dimensional Fourier transform of the proton density in a
+planar cross-section through the patient's body. 
+That is, if $\rho(x)$ is
+is the proton density distribution in the plane $P$, then the MRI device
+is able to return the data $\hat{\rho}(k)$ at a selection of 
+points $k$ in the Fourier transform domain ($k$-space). 
+The number of sample points available, however, is finite and covers
+only the low-frequency range in $k$-space well.
+Thus, it is desirable to be able to make use of the limited 
+information in an optimal fashion.
+We are currently exploring methods for MRI based on 
+exploiting the assumption that
+$\rho(x)$ is piecewise smooth (since different tissues have different
+densities, and the tissues boundaries tend to be sharp). 
+Our goal is to carry out reconstruction in three steps.
+First, we find the tissue boundaries (the discontinu-
+ities). Second, we subtract the influence of the discontonuities from
+the measured $k$-space data and third, we reconstruct the remainder which 
+is now smooth (or smoother). Standard filtered Discrete Fourier Transforms
+are easily able to reconstruct the remainder, so the basic
+problem is that of reconstructing the edges.
 
-A method we are currently developing for this problem involves making the assumption that $\rho(x)$ is piecewise continuous. The problem of reconstruction can then be decomposed into finding and reconstructing the edges (discontinuities), and reconstructing the smooth remainder. The filtered DFT is sufficient to reconstruct the smooth remainder, so the only problem is reconstructing the edges.
-
-Using directional edge detectors on the Fourier-domain data, we can extract a set of points on the edges together with unoriented normals.  By means of Algorithm \ref{algo:polygonalizationNoisy}, we can reconstruct the topology of the edge set. Given this data, we can reconstruct the edges and henceforth the discontinuous part of the image. The details of this algorithm are beyond the scope of this article, but Figure \ref{fig:mriExample} illustrates the idea behind the method. Our work on curve reconstruction was motivated by this application.
+Using directional edge detectors on the $k$-space data, we can extract
+a set of point samples from the edges, together with non-oriented normal 
+directions.  By means of
+Algorithm \ref{algo:polygonalizationNoisy}, we can 
+reconstruct the topology of the edge set and carry out the 
+procedure sketched out above.
+The details of the algorithm are beyond the scope of this article, 
+and will be reported at a later date, 
+but Figure \ref{fig:mriExample} 
+illustrates the idea behind the method. Our work on curve reconstruction was,
+in fact, motivated by this application.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -839,6 +880,20 @@ the situation considerably (bottom figure).
 \label{fig:moreNoisyExample}}
 \end{figure}
 
+\section{Conclusions}
+
+Standard methods for reconstructing a finite set of 
+curves from sample data are quite general.
+By and large, they assume that only point samples are given.
+In some applications, however, additional information is available.
+In this paper, we have shown that if both sample location and
+tangent information are given, significant improvements can be made
+in accuracy. We were motivated by a problem in medical imaging, 
+but believe that
+the methods developed here will be of use in a variety of other applications,
+including MR tractography and contour line reconstruction in topographic
+maps \cite{GORE,TOPO}.
+
 \appendix
 
 \section{Proof of Theorem \ref{thm:noisyReconstruction}}
@@ -862,7 +917,7 @@ to separate distinct curves. It is here that we use
 \begin{proof}
   For simplicity, suppose that $\vp_{i} \in \ball{\epsilon}{\vp_{j}}$ (since otherwise, $\vp_{i} \nin \nallowed{\epsilon}{\vp_{j}}$, but $\vp_{i}$ is not sampled from the same curve as $\vp_{j}$. Let $\gamma(t)$ denote the curve from which $\vp_{j}$ is sampled. Let $\vp = \vp_{j}$ and $\vm = \vm_{j}$ to simplify notation.
 
-  Select points $\vp'', \vm''$ to minimize $d(\vp_{i},L'')$, $L''=\vp''+\vm''$, with the constraint that $d(\vp'',\vp) < \pointNoise$ and the angle between $\vm''$ and $\vm$ is smaller than $\tanNoise$. Let $\va \in L''$ be the point for which $d(\va,\vp_{i}) = d(\vp_{i},L'')$.
+  Select points $\vp'', \vm''$ to minimize $d(\vp_{i},L'')$, where $L''=\vp''+\vm''$, with the constraint that $d(\vp'',\vp) < \pointNoise$ and the angle between $\vm''$ and $\vm$ is smaller than $\tanNoise$. Let $\va \in L''$ be the point for which $d(\va,\vp_{i}) = d(\vp_{i},L'')$.
 
   It is shown in the proof of Lemma \ref{lem:separationAllowedRegions} that if $d(\vx, L'') > \curvemax \epsilon^{2}$, then $vx \nin \allowed{\epsilon}{\vp''}$ (recall \eqref{eq:1}, \eqref{eq:4}). Thus, if $d(\vp_{i},L'') > \curvemax \epsilon^{2} + \pointNoise$ for any $\vp'', \vm''$, then $\vx \nin \allowed{\epsilon}{\vp''}$ for each $\vx \in \ball{\pointNoise}{\vp_{i}}$ and hence $\vp_{i} \nin \nallowed{\epsilon}{\vp}$. We will show this to be the case.
 
@@ -962,7 +1017,8 @@ for some $y \in [0,\curvemaxi]$. If $\curvemax y < 1/\sqrt{2}$ (i.e. \eqref{eq:c
 \section{Speeding it up: an $O(N \log N)$ algorithm}
 \label{sec:quadTreeSection}
 
-As remarked earlier, Algorithm \ref{algo:polygonalization} and \ref{algo:polygonalizationNoisy} run in $O(N^{2})$ time as written. The slow step is Step 1 which involves comparing every point/tangent pair to every other such pair. This scaling issue can be remedied by using a spatially adaptive data structure.
+As remarked earlier, Algorithm \ref{algo:polygonalization} and \ref{algo:polygonalizationNoisy} run in $O(N^{2})$ time as written. The slow step is Step 1 which involves comparing every point/tangent pair to every other such pair. This scaling issue can be remedied by using a spatially adaptive data structure
+\cite{quadtrees}
 
 A caveat: there are two different ways of increasing $N$. The first (increasing outward) is by taking larger figures, with the sampling rate held fixed. The second (increasing inward) is by holding the figure size fixed, but increasing the sampling rate. We are interested primarily in the first case, and we will treat this case only. Therefore, we make the following additional assumption:
 
@@ -1008,7 +1064,7 @@ In computing Step 1 of Algorithm \ref{algo:polygonalization} or \ref{algo:polygo
   \begin{enumerate}
   \item Compute a quadtree $Q$ storing $(\vp_{i},\vm_{i})$ pairs. The splitting criteria for a node is when the node contains more than $\densitymax \lambda^{2}$ points.
   \item Initialize the graph $G = (\pointData, E)$ with empty edge set.
-  \item For each point $\vp_{i}$, iterate over the points $\vp_{j}$ contained in the node containing $\vp_{i}$ and all of it's nearest neighbors. If
+  \item For each point $\vp_{i}$, iterate over the points $\vp_{j}$ contained in the node containing $\vp_{i}$ and all of its nearest neighbors. If
     \begin{equation*}
       \vp_{i} \in \allowed{\epsilon}{\vp_{j}} \textrm{~and~} \vp_{j} \in \allowed{\epsilon}{\vp_{i}},
     \end{equation*}
@@ -1067,6 +1123,12 @@ Sheung-Hung Poon, and Edgar Ramos.
 \newblock Curve reconstruction from noisy samples.
 \newblock {\em Comput. Geometry}, 31:63--100, 2005.
 
+\bibitem{TOPO}
+Y. Chen, R. Wang, and J. Qian. 
+\newblock Extracting contour lines from common-conditioned topographic maps. 
+\newblock {\em IEEE Transactions on Geoscience and Remote Sensing}, 
+44(4):1048--1057, 2006.
+
 \bibitem{dey99curve}
 Tamal~K. Dey, Kurt Mehlhorn, and Edgar~A. Ramos.
 \newblock Curve reconstruction: Connecting dots with good reason.
@@ -1082,6 +1144,22 @@ Herbert Edelsbrunner.
 \newblock Shape reconstruction with Delaunay complex.
 \newblock In {\em LATIN '98: Theoretical Informatics}, Lecture Notes
 in Computer Science, 1380, Springer-Verlag, 119--32, 1998.
+
+\bibitem{quadtrees}
+Raphael Finkel and J.L. Bentley.
+\newblock Quad Trees: A Data Structure for Retrieval on Composite Keys
+\newblock In {\em Acta Informatica}, 4(1): 1--9, 1974. 
+
+\bibitem{GORE}
+A. Mishra, Y. Lu, A. S. Choe, A. Aldroubi, J. C. Gore,
+A, W. Andersona, Z. Ding.
+\newblock An image-processing toolset for diffusion tensor tractography.
+\newblock {\em Magnetic Resonance Imaging}, 25: 365--376, 2007. 
+
+
+Hugues Hoppe, Tony DeRose, Tom Duchamp, John McDonald, and Werner Stuetzle.
+\newblock Surface reconstruction from unorganized points.
+\newblock {\em Computer Graphics}, 26(2):71--78, 1992.
 
 \bibitem{hoppe92surface}
 Hugues Hoppe, Tony DeRose, Tom Duchamp, John McDonald, and Werner Stuetzle.
@@ -1113,11 +1191,6 @@ Matthias Zwicker, Hanspeter Pfister, Jeroen van Baar, and Markus Gross.
 \newblock In {\em SIGGRAPH '01: Proceedings of the 28th annual conference on
   Computer graphics and interactive techniques}, pages 371--378, New York, NY,
   USA, 2001. ACM.
-
-\bibitem{quadtrees}
-Raphael Finkel and J.L. Bentley.
-\newblock Quad Trees: A Data Structure for Retrieval on Composite Keys
-\newblock In {\em Acta Informatica}, 4 (1): 1–9, 1974 doi:10.1007/BF00288933.
 
 \end{thebibliography}
 \end{document}
