@@ -338,7 +338,7 @@ $\epsilon$-sampled. ]
 \end{algo}
 
 \begin{remark}
-  As presented, the complexity of Algorithm \ref{algo:polygonalization} is $O(N^{2})$, due to both step 1 and step 2. (Step 2 can be slow if $O(N)$ points are within the allowed region of some particular point). The complexity can be reduced to $O(N \log N)$; this is discussed in Appendix \ref{sec:quadTreeSection}.
+  As presented, the complexity of Algorithm \ref{algo:polygonalization} is $O(N^{2})$, due to both step 1 and step 2. (Step 2 can be slow if $O(N)$ points are within the allowed region of some particular point). The complexity can be reduced to $O(N \log N)$ using quadtrees if we assume a minimal sampling rate (see Appendix \ref{sec:quadTreeSection}).
 \end{remark}
 
 The following theorem guarantees the correctness of
