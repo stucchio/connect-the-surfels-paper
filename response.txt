@@ -1,0 +1,42 @@
+Reviewer #1:
+
+p. 1, Abstract: Fixed.
+
+p. 4, Figure 3:
+
+p. 6, Algorithm, line 2a:
+
+p. 8.
+
+p. 13, line 1,
+p. 15, line 11,
+
+Algorithm 4 is described in the appendix. The results section should not be
+presenting results from an algorithm which is not part of the main body of the
+paper. Either incorporate Algorithm 4 in the main body of the paper or base
+your results on the other algorithms.
+
+Reviewer #2:
+
+1.
+
+2.
+
+3.
+
+4.
+
+5.
+
+6.
+
+7.
+
+8.
+
+9.
+
+10.
+
+11.
+

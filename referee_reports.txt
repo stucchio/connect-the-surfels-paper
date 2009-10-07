@@ -1,0 +1,174 @@
+Ms. No.: GMOD-09-10
+Title: Reconstructing Curves from Points and Tangents
+Corresponding Author: Dr. Chris Stucchio
+Authors: Leslie Greengard, Ph.D., M.D.;
+
+Dear Dr. Stucchio,
+
+Thank you for submitting your manuscript to Graphical Models. The reviewers have made suggestions which the Editor feels would improve your manuscript. The Editor encourages you to consider these comments and make an appropriate revision of your manuscript. The reviewers' comments are below.
+
+Please submit your revision online within 60 days by logging onto the Elsevier Editorial System for Graphical Models at http://ees.elsevier.com/gmod/.
+
+The manuscript record can be found in the "Submissions Needing Revision" menu.
+
+Username:  stucchio
+Password:  stucchio483453
+
+When submitting your revised paper, please include a separate document uploaded as "Response to Reviews" that carefully addresses the issues raised in the below comments, point by point. You should also include a suitable rebuttal to any specific request for change that has not been made.
+
+To facilitate the electronic publication of your manuscript (should it be accepted), we request that your manuscript text, tables and figure legend be submitted in an editable format (Word, WordPerfect, or LaTex only), and all figures uploaded individually as TIF or EPS files.
+
+Thank you, and we look forward to receiving your revised manuscript.
+
+With kind regards,
+
+Ann Barajas, Journal Manager
+Graphical Models
+Elsevier
+525 B Street, Suite 1900
+San Diego, CA  92101
+
+Office:  (619) 699-6312
+Fax:  (619) 699-6211
+E-mail:  GMOD@elsevier.com
+
+Reviewers' comments:
+
+
+Reviewer #1: This paper presents an algorithm (and three variations) for reconstructing 2D
+curves from a set of 2D sample points and the curve tangents at those sample
+points. A curve is <epsilon>-sampled if the distance between adjacent sample points
+is at most <epsilon>. Sections 1 and 2 of the paper, present the basic, tangent based
+algorithm and prove that the algorithm correctly reconstructs an <epsilon>-sampled set
+of curves separated from each other by distance <delta> where <epsilon> is O(sqrt(<delta>)). This is an
+improvement over the requirement that samples be at most O(<delta>) apart when no
+tangential information is available. Section 3 discusses practical modifications
+of the algorithm to handle noise. Section 4 discusses experimental results.
+
+The importance of tangents in curve and surface reconstruction is well known.
+All the Voronoi based reconstruction algorithms such as Crust and Cocone implicitly
+or explicitly approximate such tangents. To the best of my knowledge,
+the observation that explicitly providing the exact tangent reduces the sampling
+requirement from O(<delta>) to O(sqrt(<delta>)) is new. However, this result only applies to
+perfect tangent information without any noise. Tangent estimation is notoriously
+unstable, and the smallest perturbations would make this result unusable.
+It is hard to imagine any practical situation where the distance between sample
+points could be larger than the distance between curves.
+
+The algorithm requires two parameters, the maximum curvature and the sampling
+parameter <epsilon>.  Algorithms such as Crust or Cocone do not have any such
+requirements. The sampling requirements for Crust and Cocone (based on local
+feature size) are also much less restrictive than the <epsilon>-sampling required here,
+with low curvature areas requiring much less sampling than high curvature ones.
+
+The experimental results are all on synthetic data. The authors discuss briefly
+the application of their algorithm to MRI data and don't provide any
+experimental results on this data. (Figure 7 is a simulated MRI image.)
+
+The authors state that they developed the algorithms in this paper for
+reconstruction of MRI data. A paper which describes in much greater detail the
+MRI data and the application, presents experimental results on real application
+MRI data and compares those results with Crust and/or its variations, would
+potentially have much more publication value.
+
+Specific comments:
+
+p. 1, Abstract: "For the case of point data alone, O(<delta>) is required." -
+
+Clearer would be:
+This sampling rate is an improvement over the required O(<delta>) sampling rate
+when no tangential information is available."
+
+p. 4, Figure 3:
+From the paper, the three oval regions in the image should be disks. They are
+clearly not disks in the image (probably because of image scaling.) Resize the
+image so that they are disks.
+
+p. 6, Algorithm, line 2a: Compute the set of vertices
+R^±_i = { p_j : (p_i, p_j) in E and ±(p_j - p_i) · m_i > 0 }.
+
+Much clearer is:
+R^+_i = { p_j : (p_i, p_j) in E and (p_j - p_i) · m_i > 0 } and
+R^-_i = { p_j : (p_i, p_j) in E and (p_j - p_i) · m_i < 0 }.
+
+Same with the definition of r_i.
+
+p. 8. After step 1, Algorithm 1 is essentially the Nearest Neighbor Crust
+Algorithm described by Dey and Kumar in "A simple provable curve reconstruction
+algorithm", Proc. 10th annual ACM-SIAM Symp on Discrete Algorithms, pp.
+893-894, 1999. See also, Dey's book "Curve and Surface Reconstruction", Section 2.3.
+Both should be cited.
+
+Both the original Dey and Kumar paper and Dey's book provide proofs of
+correctness of the Dey and Kumar algorithm. These proofs can be cited in
+place of Propositions 2.10, 2.11 and 2.12.
+
+p. 13, line 1, "... Algorithm 4 successfully reconstructs the curve,..." -
+p. 15, line 11, "... some points will eventually be connected by Algorithm 4." -
+
+Algorithm 4 is described in the appendix. The results section should not be
+presenting results from an algorithm which is not part of the main body of the
+paper. Either incorporate Algorithm 4 in the main body of the paper or base
+your results on the other algorithms.
+
+
+
+
+Reviewer #2: Review for manuscript GMOD-09-10
+
+Reconstructing Curves from Points and Tangents - by Greengard and
+Stucchio
+
+The paper presents an algorithm for generating polygonal approximations to
+curves for point and tangent data. It is also assumed that there is prior
+information about an upper bound on the curvatures. The algorithm is simple
+and neat, and the paper presents the conditions which ensures that the
+algorithm works. The algorithm seems as the obvious way to solve the problem,
+and the unique contribution here is stating the right conditions and proving
+that the reconstruction works. I have no idea if a similar algorithm has been
+suggested before. If not, then I think it should be accepted for publication,
+subject to some corrections. The corrections that I suggest are list below:
+
+1. The upper bound on the curvatures is an important factor in the algorithm,
+and it should be mentioned in the abstract and in the first paragraph of the
+introduction. Also, this assumption should appear on page 5, right after the
+figure.
+
+2. The symbol $\delta$ appears in two different meanings in (1.2a) and on the
+first page.
+
+3. The proof of Lemma 2.9 seems too long to me - try to shorten it.
+
+4. In Lemma 2.12, $m_0$ should be $m_i$, and in the proof it should be
+$|m_i\cdot(p_j-p)|=|t-t_0|$.
+
+5. For a complete proof of Theorem 2.8 I think that the statement in Lemma
+2.12 should be stronger. Namely:
+
+Then, $(p_i,p)$ is an edge in the polygonalization of $\gamma$ iff
+$|(p_i-p)\cdot m_i|$ is minimal.
+
+6. Page 9, middle, should be $\Gamma$ instead of $G$?
+
+7. The allowed domains in Definition 3.1 are not easy to compute - how do you
+actually apply that definition.
+
+8. The data of the example in Figure 9 is strange to me - it is not realistic
+to have exact data on the curves and noisy data elsewhere.
+
+9. In both Theorems 2.8 and 3.2 the statements repeat the assumptions on the
+input. It can be said simpler that - under the above assumptions ...
+
+10. In Theorem 3.2, the statement "correctly reconstruct the figure" is not
+exact. First, here and also above, why use the term figure and not curves.
+Second, the statement here should say something about the polygon constructed
+by the algorithm through the points $p_i$, how is it w.r.t. the right
+polygonalization using the points $p_{i,*}$? how well it approximate it? The
+statement in step 3 of the algorithm, that "This graph is the polygonalization
+of $\{\gamma_i(t)\}$ cannot be true - it is just an approximation of such a
+polygonalization, and this approximation can be studied.
+
+11. For filtering spurious points, I suggest to look at: Lipman, Y., Cohen-Or,
+D., Levin, D., and Tal-Ezer, H. 2007. Parameterization-free projection for
+geometry reconstruction. ACM Trans. Graph. 26, 3 (Jul. 2007), 22.
+
