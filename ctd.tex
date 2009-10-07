@@ -470,14 +470,14 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 
 \begin{lemma}
   \label{lem:closestTangentPointInAllowedRegionIsCorrect}
-  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{0}$ and fix an orientation, say $+$. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{0} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
-Then, the only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{0}$ is minimal.
+  Fix a point $\vp_{i}=\vp \in \pointData$. Choose a tangent vector $\vm_{i}$ and fix an orientation, say $+$. Consider the set of points $\vp_{j}$ such that $(\vp, \vp_{j})$ is an edge in $G$ and $(\vp_{j} - \vp) \cdot \vm_{i} > 0$. Suppose also that $\epsilon$ satisfies \eqref{eq:constraintOnkmaxEpsilon}.
+Then, the only edge in the polygonalization of $\gamma$ is the edge for which $(\vp_{j} - \vp) \cdot \vm_{i}$ is minimal.
 \end{lemma}
 
 \begin{proof}
   By Lemma \ref{lem:localGraphParameterization}, the curve $\gamma(t)$ can be locally parameterized as a graph near $\vp$, i.e. \eqref{eq:localGraphParameterization}. This is valid up to a distance $\curvemaxi$; by \eqref{eq:constraintOnkmaxEpsilon}, it is valid for all points in the graph $G$ connected to $\vp$.
 
-The adjacent points on the graph are the ones for which $\abs{t-t_{0}}$ is minimal. Note that $\vm_{0} \cdot (\vp_{j} - \vp) = t$ (simply plug in \eqref{eq:localGraphParameterization}); thus, minimizing $\vm_{0} \cdot (\vp_{j} - \vp)$ selects the adjacent point on the graph.
+The adjacent points on the graph are the ones for which $\abs{t-t_{0}}$ is minimal. Note that $\vm_{i} \cdot (\vp_{j} - \vp) = t$ (simply plug in \eqref{eq:localGraphParameterization}); thus, minimizing $\vm_{i} \cdot (\vp_{j} - \vp)$ selects the adjacent point on the graph.
 \end{proof}
 
 The minimal edge is the edge $\vr^{+}_{0}$ as computed in Step (2b) of Algorithm \ref{algo:polygonalization}.
