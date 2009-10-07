@@ -319,13 +319,15 @@ $\epsilon$-sampled. ]
   \item For each vertex $\vp_{i} \in \pointData$:
     \begin{enumerate}[a.]
     \item Compute the set of vertices
-      \begin{equation*}
-        R^{\pm}_{i} = \{ \vp_{j} : (\vp_{i}, \vp_{j}) \in E \textrm{~and~} \pm (\vp_{j}-\vp_{i}) \cdot \vm_{i} > 0 \}
-      \end{equation*}
+      \begin{eqnarray*}
+        R^{+}_{i} &=& \{ \vp_{j} : (\vp_{i}, \vp_{j}) \in E \textrm{~and~} (\vp_{j}-\vp_{i}) \cdot \vm_{i} > 0 \}\\
+        R^{-}_{i} &=& \{ \vp_{j} : (\vp_{i}, \vp_{j}) \in E \textrm{~and~} (\vp_{j}-\vp_{i}) \cdot \vm_{i} < 0 \}
+      \end{eqnarray*}
     \item Find the nearest tangential neighbors, i.e.
-      \begin{equation*}
-        \vr^{\pm}_{i} = \textrm{argmin}_{\vq \in R^{\pm}_{i}} d_{\vm_{i}}(\vq, \vp_{i})
-      \end{equation*}
+      \begin{eqnarray*}
+        \vr^{+}_{i} &=& \textrm{argmin}_{\vq \in R^{+}_{i}} d_{\vm_{i}}(\vq, \vp_{i})\\
+        \vr^{-}_{i} &=& \textrm{argmin}_{\vq \in R^{-}_{i}} d_{\vm_{i}}(\vq, \vp_{i})\\
+      \end{eqnarray*}
     \end{enumerate}
   \item Output the graph $\Gamma = ( \pointData, E')$ with
     \begin{equation*}
