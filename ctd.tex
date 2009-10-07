@@ -104,7 +104,7 @@ effort that considers how much better the reconstruction can be if
 \emph{tangential} information is given as well.
 We show that if curves are separated from each other by a
 distance $\curvesep$, then the sampling rate need only be $O(\sqrt{\curvesep})$
-for error-free reconstruction. This sampling rate is an improvement over the required $O(\curvesep)$ sampling required when no tangential information is available.
+for error-free reconstruction provided an upper bound on the curvature is known. This sampling rate is an improvement over the required $O(\curvesep)$ sampling required when no tangential information is available.
 \end{abstract}
 
 \section{Introduction}
@@ -112,7 +112,7 @@ for error-free reconstruction. This sampling rate is an improvement over the req
 In this paper, we consider the problem of reconstructing a
 $C^{1}$ \emph{figure} -- that is, a family of curves $\curveSet$ from a finite
 set of data. More precisely, we assume we are given
-an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$. Note that the tangents have no particular orientation; making the change $\vm_{i} \rightarrow -\vm_{i}$ destroys no information.
+an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$, as well as an upper bound on the curvature of each curve in $\curveSet$. Note that the tangents have no particular orientation; making the change $\vm_{i} \rightarrow -\vm_{i}$ destroys no information.
 
 \begin{definition}
   \label{def:polygonalization}

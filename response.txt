@@ -8,17 +8,11 @@ p. 6, Algorithm, line 2a: We have incorporated the suggested changes.
 
 p. 8.
 
-p. 13, line 1,
-p. 15, line 11,
-
-Algorithm 4 is described in the appendix. The results section should not be
-presenting results from an algorithm which is not part of the main body of the
-paper. Either incorporate Algorithm 4 in the main body of the paper or base
-your results on the other algorithms.
+p. 13, line 1, and p. 15, line 11, both of which concerned a reference to Algorithm 4. We had actually intended these remarks to apply to Algorithm 1, the Noise-Free Polygonalization algorithm. We mistakenly assigned the same LaTeX label to Algorithm 4 as to Algorithm 1. This is now fixed.
 
 Reviewer #2:
 
-1.
+1. The suggested changes have now been made.
 
 2.
 
