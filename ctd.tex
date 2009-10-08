@@ -748,6 +748,12 @@ Combining these arguments, the probability that any \emph{randomly chosen}
 spurious point $\vq$ is connected to any other point in the
 polygonalization is $O(L \epsilon^{4})$.
 
+\subsubsection{Motivation: Denoising MRI}
+
+Our interest in filtering spurious surfels is motivated by the application to MRI described in section \ref{sec:MRI}. In practice, the imaging data $\hat{\rho}(k)$ is always corrupted by additive white noise. As described in section \ref{sec:MRI}, the surfels are extracted from the image by applying a filter and then thresholding.
+
+However, when the filter is applied to a noise term, the output of the filter will occasionally be spuriously higher than the surfel extraction threshold. The points at which this occurs are random, and are unrelated to the underlying image. By removing such spurious surfels, we can improve the image quality and lower the signal to noise ratio.
+
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
 \ifx\plotpoint\undefined\newsavebox{\plotpoint}\fi

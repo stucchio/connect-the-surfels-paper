@@ -26,7 +26,7 @@ Reviewer #2:
 
 7.
 
-8.
+8. We are uncertain what the reviewer means by "not realistic", but we will assume for the purposes of this response that he/she means "not realistic for any imaging modalities he/she is familiar with". We recognize that our motivating application (MRI) might be unfamiliar to many readers of Graphical Models. For this reason, we have added Section 4.3.1 which explains the source of randomly located spurious surfels in the case of MRI images.
 
 9.
 
