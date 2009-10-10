@@ -28,7 +28,9 @@ Reviewer #2:
 
 8. We are uncertain what the reviewer means by "not realistic", but we will assume for the purposes of this response that he/she means "not realistic for any imaging modalities he/she is familiar with". We recognize that our motivating application (MRI) might be unfamiliar to many readers of Graphical Models. For this reason, we have added Section 4.3.1 which explains the source of randomly located spurious surfels in the case of MRI images.
 
-9.
+9. We believe the referee is incorrect on this point. Assumptions 1-3  make existential claims about curvature bounds, curve separation and noise amplitude. They do not explicitly state what those bounds must be.
+
+The text of Theorem 2.8 and 3.2 explicitly quantify those existential claims, rather than simply repeating them.
 
 10.
 
