@@ -2,6 +2,7 @@
 \usepackage{amsmath,amssymb,enumerate,bbm,calc,capt-of,ifthen}
 \usepackage{graphicx}% Include figure files
 \usepackage{epsfig}
+\usepackage{bm}% bold math
 
 \newtheorem{cntr}{do not use}
 \newcommand{\tmop}[1]{\operatorname{#1}}
@@ -46,6 +47,7 @@
 %Handy macros
 
 \newcommand{\vx}[0]{{\vec{x}}}
+\newcommand{\vk}[0]{{\vec{k}}}
 \newcommand{\vp}[0]{{\vec{p}}}
 \newcommand{\vq}[0]{{\vec{q}}}
 \newcommand{\vr}[0]{{\vec{r}}}
@@ -87,6 +89,13 @@
 \newcommand{\nallowed}[2]{ { A^{\pointNoise, \tanNoise}_{#1}(#2) } }
 
 \newcommand{\densitymax}{{\rho_{m}}}
+
+\newcommand{\dfilter}[2]{{D_{#1,#2}}}
+\newcommand{\Img}{{\bm{\rho}}}
+\newcommand{\ImgTex}{{\Img_{\textrm{tex}}}}
+\newcommand{\Imgk}{\widehat{\Img}}
+\newcommand{\ImgCoeff}[1]{{\Img_{#1}}}
+\newcommand{\step}[1]{{1_{\gamma_{#1}}}}
 
 
 \begin{document}
@@ -653,38 +662,21 @@ and we will not expanded further on this idea in the present paper.
 \section{Examples}
 
 \subsection{Extracting Topology from MRI images}
+\label{sec:MRI}
 
-In its simplest version, Magnetic Resonance Imaging (MRI) is
-used to obtain the
-two-dimensional Fourier transform of the proton density in a
-planar cross-section through the patient's body.
-That is, if $\rho(x)$ is
-is the proton density distribution in the plane $P$, then the MRI device
-is able to return the data $\hat{\rho}(k)$ at a selection of
-points $k$ in the Fourier transform domain ($k$-space).
-The number of sample points available, however, is finite and covers
-only the low-frequency range in $k$-space well.
-Thus, it is desirable to be able to make use of the limited
-information in an optimal fashion.
-We are currently exploring methods for MRI based on
-exploiting the assumption that
-$\rho(x)$ is piecewise smooth (since different tissues have different
-densities, and the tissues boundaries tend to be sharp).
-Our goal is to carry out reconstruction in three steps.
-First, we find the tissue boundaries (the discontinu-
-ities). Second, we subtract the influence of the discontonuities from
-the measured $k$-space data and third, we reconstruct the remainder which
-is now smooth (or smoother). Standard filtered Discrete Fourier Transforms
-are easily able to reconstruct the remainder, so the basic
-problem is that of reconstructing the edges.
+In this section we discuss the application area which motivated this work.
 
-Using directional edge detectors on the $k$-space data, we can extract
-a set of point samples from the edges, together with non-oriented normal 
-directions.  By means of
-Algorithm \ref{algo:polygonalizationNoisy}, we can 
-reconstruct the topology of the edge set and carry out the 
-procedure sketched out above.
-The details of the surfel extraction algorithm are described in \cite{WAVEFRONT}, and the details of the MRI reconstruction will be reported at a later date. Figure \ref{fig:mriExample} illustrates the idea behind the method. Our work on curve reconstruction was, in fact, motivated by this application.
+In its simplest version, Magnetic Resonance Imaging (MRI) is used to obtain the two-dimensional Fourier transform of the proton density in a planar cross-section through the patient's body. That is, if $\rho(x)$ is is the proton density distribution in the plane $P$, then the MRI device is able to return the data $\hat{\rho}(k)$ at a selection of points $k$ in the Fourier transform domain ($k$-space). The number of sample points available, however, is finite and covers only the low-frequency range in $k$-space well. Thus, it is desirable to be able to make use of the limited information in an optimal fashion. We are currently exploring methods for MRI based on exploiting the assumption that $\rho(x)$ is piecewise smooth (since different tissues have different densities, and the tissues boundaries tend to be sharp). Our goal is to carry out reconstruction in three steps. First, we find the tissue boundaries (the discontinuities). Second, we subtract the influence of the discontonuities from the measured $k$-space data. Third, we reconstruct the remainder which is now smooth (or smoother), and then use our explicit knowledge of the discontinuities to put them in the image. Standard filtered Discrete Fourier Transforms are easily able to reconstruct the remainder, so the basic problem is that of reconstructing the edges.
+
+The basic component of our algorithm is wavefront extraction, which is discussed in more detail in \cite{WAVEFRONT}. The singular support of a function is a set of points $\vx \in \RR^{2}$ which are the location of the singularities of the function. The wavefront of a function is a set of surfels $(\vx, \vk) \in \RR^{2} \times S^{1}$, where $\vx$ indicates the location of a singular point and $\vk$ it's direction.
+
+In \cite{WAVEFRONT}, a directional filter $\dfilter{\theta}{\alpha}: L^{2}(\RR^{2}, d\vk) \rightarrow L^{2}(\RR^{2}, d\vx)$ is constructed which has the following property. For simplicity\footnote{The extension to multiple curves of discontinuity is straightforward, and is done in \cite{WAVEFRONT}.}, let $\Img(\vx)$ be a function with a jump discontinuity along a single curve $\gamma(t)$ (with $N(t)$ the normal to $\gamma(t)$), and $\Imgk(\vk)$ it's continuous Fourier transform, and suppose also that the rest of the function is suitably smooth. Then $[\dfilter{\theta}{\alpha} \Imgk](\vx)$ is small except near the points
+\begin{equation*}
+  \{ \vx : \vx = \gamma(t) \textrm{ and } \abs{N(t) \angle \theta} < \alpha \}.
+\end{equation*}
+That is to say, $[\dfilter{\theta}{\alpha} \Imgk](\vx)$ is localized about the points $\gamma(t)$ where where $\gamma'(t)$ points approximately in the direction $\theta \pm \pi/2$. By thresholding $\abs{[\dfilter{\theta}{\alpha} \Imgk](\vx)}$ and measuring the locations above the threshold, we can extract surfels in the wavefront of $\Img(\vx)$. By repeating this procedure for different values of $\theta$, we can extract a set of surfels which spans the entire curve. Because this scheme directly extracts the tangents from the raw data, it does not suffer from instabilities which are common when approximating tangents. The error in the tangential approximation is simply $\alpha$.
+
+Once surfels are extracted for many angles, we can apply Algorithm \ref{algo:polygonalizationNoisy} to reconstruct the topology of the edge set and carry out the procedure sketched out above. The details of the surfel extraction algorithm are described in \cite{WAVEFRONT}, and the details of the MRI reconstruction will be reported at a later date. Figure \ref{fig:mriExample} illustrates the idea behind the method.
 
 \begin{figure}
 \setlength{\unitlength}{0.240900pt}
@@ -1126,9 +1118,9 @@ Sheung-Hung Poon, and Edgar Ramos.
 \newblock {\em Comput. Geometry}, 31:63--100, 2005.
 
 \bibitem{TOPO}
-Y. Chen, R. Wang, and J. Qian. 
-\newblock Extracting contour lines from common-conditioned topographic maps. 
-\newblock {\em IEEE Transactions on Geoscience and Remote Sensing}, 
+Y. Chen, R. Wang, and J. Qian.
+\newblock Extracting contour lines from common-conditioned topographic maps.
+\newblock {\em IEEE Transactions on Geoscience and Remote Sensing},
 44(4):1048--1057, 2006.
 
 \bibitem{dey99curve}
