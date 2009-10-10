@@ -402,11 +402,11 @@ Substituting this into \eqref{eq:1} yields:
 \end{equation}
 Thus, the \emph{normal} distance between any point in $\allowed{\epsilon}{\vp}$ and $L$ is $O(\curvemax \epsilon^{2})$.
 
-If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$, 
-then clearly $\gamma_{j}(t') \nin \allowed{\epsilon}{\gamma_{i}(t)}$ 
-so we assume $\gamma_{j}(t') \in L+\vm^{\perp} \RR$. In this case, 
-$\gamma_{j}(t') = \vp + \vm \curvemaxi \sin(\theta_{0}) + \vm^\perp z_j$ 
-for some $\theta_0 \in 
+If $\gamma_{j}(t') \nin L+\vm^{\perp} \RR$,
+then clearly $\gamma_{j}(t') \nin \allowed{\epsilon}{\gamma_{i}(t)}$
+so we assume $\gamma_{j}(t') \in L+\vm^{\perp} \RR$. In this case,
+$\gamma_{j}(t') = \vp + \vm \curvemaxi \sin(\theta_{0}) + \vm^\perp z_j$
+for some $\theta_0 \in
 [-\arcsin(\epsilon \curvemax),\arcsin(\epsilon \curvemax)]$
 and $z_j \in \RR$.
 Thus, $|z_j| = d_{\vm^{\perp}}(\gamma_{j}(t'), L)$,
@@ -655,25 +655,25 @@ and we will not expanded further on this idea in the present paper.
 \subsection{Extracting Topology from MRI images}
 
 In its simplest version, Magnetic Resonance Imaging (MRI) is
-used to obtain the 
+used to obtain the
 two-dimensional Fourier transform of the proton density in a
-planar cross-section through the patient's body. 
+planar cross-section through the patient's body.
 That is, if $\rho(x)$ is
 is the proton density distribution in the plane $P$, then the MRI device
-is able to return the data $\hat{\rho}(k)$ at a selection of 
-points $k$ in the Fourier transform domain ($k$-space). 
+is able to return the data $\hat{\rho}(k)$ at a selection of
+points $k$ in the Fourier transform domain ($k$-space).
 The number of sample points available, however, is finite and covers
 only the low-frequency range in $k$-space well.
-Thus, it is desirable to be able to make use of the limited 
+Thus, it is desirable to be able to make use of the limited
 information in an optimal fashion.
-We are currently exploring methods for MRI based on 
+We are currently exploring methods for MRI based on
 exploiting the assumption that
 $\rho(x)$ is piecewise smooth (since different tissues have different
-densities, and the tissues boundaries tend to be sharp). 
+densities, and the tissues boundaries tend to be sharp).
 Our goal is to carry out reconstruction in three steps.
 First, we find the tissue boundaries (the discontinu-
 ities). Second, we subtract the influence of the discontonuities from
-the measured $k$-space data and third, we reconstruct the remainder which 
+the measured $k$-space data and third, we reconstruct the remainder which
 is now smooth (or smoother). Standard filtered Discrete Fourier Transforms
 are easily able to reconstruct the remainder, so the basic
 problem is that of reconstructing the edges.
@@ -885,13 +885,13 @@ the situation considerably (bottom figure).
 
 \section{Conclusions}
 
-Standard methods for reconstructing a finite set of 
+Standard methods for reconstructing a finite set of
 curves from sample data are quite general.
 By and large, they assume that only point samples are given.
 In some applications, however, additional information is available.
 In this paper, we have shown that if both sample location and
 tangent information are given, significant improvements can be made
-in accuracy. We were motivated by a problem in medical imaging, 
+in accuracy. We were motivated by a problem in medical imaging,
 but believe that
 the methods developed here will be of use in a variety of other applications,
 including MR tractography and contour line reconstruction in topographic
@@ -1151,7 +1151,7 @@ in Computer Science, 1380, Springer-Verlag, 119--32, 1998.
 \bibitem{quadtrees}
 Raphael Finkel and J.L. Bentley.
 \newblock Quad Trees: A Data Structure for Retrieval on Composite Keys
-\newblock In {\em Acta Informatica}, 4(1): 1--9, 1974. 
+\newblock In {\em Acta Informatica}, 4(1): 1--9, 1974.
 
 \bibitem{GORE}
 A. Mishra, Y. Lu, A. S. Choe, A. Aldroubi, J. C. Gore,
