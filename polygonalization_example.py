@@ -36,8 +36,6 @@ ax.set_xticklabels([])
 ax.set_yticklabels([])
 
 
-title("Curves and polygonalizations")
-
 
 
 savefig("polygonalization_example.eps")

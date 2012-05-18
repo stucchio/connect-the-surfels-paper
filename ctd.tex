@@ -109,7 +109,7 @@
 \begin{abstract}
 Reconstructing a finite set of curves from an unordered set of sample points
 is a well studied topic. There has been less
-effort that considers how much better the reconstruction can be if
+work that considers how much better the reconstruction can be if
 \emph{tangential} information is given as well.
 We show that if curves are separated from each other by a
 distance $\curvesep$, then the sampling rate need only be $O(\sqrt{\curvesep})$
@@ -121,7 +121,7 @@ for error-free reconstruction provided an upper bound on the curvature is known.
 In this paper, we consider the problem of reconstructing a
 $C^{1}$ \emph{figure} -- that is, a family of curves $\curveSet$ from a finite
 set of data. More precisely, we assume we are given
-an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$, as well as an upper bound on the curvature of each curve in $\curveSet$. Note that the tangents have no particular orientation; making the change $\vm_{i} \rightarrow -\vm_{i}$ destroys no information.
+an unorganized set of points $\pointData$, as well as \emph{unit} tangents to the points $\tanData$, and an upper bound on the curvature of each curve in $\curveSet$. Note that the tangents have no particular orientation; making the change $\vm_{i} \rightarrow -\vm_{i}$ destroys no information. The algorithm is not given the number of curves, nor does it know which point lies on which curve.
 
 \begin{definition}
   \label{def:polygonalization}
@@ -129,8 +129,8 @@ an unorganized set of points $\pointData$, as well as \emph{unit} tangents to th
 $\Gamma = (V,E)$ with the property that each vertex $p \in V$ is a point on some $\gamma_{i}(t)$, and each edge connects points which are adjacent samples of some curve $\gamma_{i}$.
 \end{definition}
 
-Our goal here is to construct an algorithm which reconstructs the
-polygonalization of a figure from the data defined above.
+Our goal here is to describe an algorithm which constructs the
+polygonalization of a figure from the data described above.
 An example of a polygonalization is given in Figure \ref{fig:polygonalization}.
 
 \begin{figure}
@@ -144,7 +144,7 @@ An example of a polygonalization is given in Figure \ref{fig:polygonalization}.
 
 The topic of reconstructing figures solely from point data $\pointData$ has been the subject of considerable attention \cite{amenta98crust,amenta98new,dey99curve,hoppe92surface,amenta02simple, dey01reconstructing, edelsbrunner}. This is actually a more difficult problem, and only weaker results are possible. The main difficulty is the following; if the distance between two separate curves $\gamma_{i}$ and $\gamma_{j}$ is smaller than the sample spacing, then it is difficult to determine which points are associated to which curve. Thus, sample spacing must be $O(\curvesep)$, with $\curvesep$ the distance between different curves.
 
-Tangential information makes this task easier; in essence, if two points are nearby (say $\vp_{1}$ and $\vp_{2}$), but $\pm \vm_{1}$ does not point (roughly) in the direction $\vp_{2}-\vp_{1}$, then $\vp_{1}$ and $\vp_{2}$ should not be connected. This fact allows us to reduce the sample spacing to $O(\curvesep^{1/2})$, rather than $O(\curvesep)$. This is to be expected by analogy to interpolation; knowledge of a function and its derivatives yields quadratic accuracy.
+Tangential information makes this task easier; in essence, if two points are nearby (say $\vp_{1}$ and $\vp_{2}$), but $\pm \vm_{1}$ does not point (roughly) in the direction $\vp_{2}-\vp_{1}$, then $\vp_{1}$ and $\vp_{2}$ should not be connected. This fact allows us to reduce the sample spacing to $O(\curvesep^{1/2})$, rather than $O(\curvesep)$ (for $\curvesep < 1$). This is to be expected by analogy to interpolation; knowledge of a function and its derivatives yields quadratic accuracy.
 
 We should mention at this point related work on \emph{Surfels} (short for \emph{Surface Elements}). A surfel is a point, together with information characterizing the tangent plane to a surface at that point (and perhaps other information such as texture). They have become somewhat popular in computer graphics recently, mainly for rendering objects characterized by point clouds
 \cite{882320,1103907,598521,1018057,344936,383300}.
@@ -242,7 +242,7 @@ Here, $\ball{r}{\vp}$ is the usual ball of radius $r$ about $\vp$.
 \includegraphics[scale=0.5]{forbidden_zone.eps}
 \caption{The forbidden zones, as described in Lemma \ref{lem:forbiddenZone}.
 The orange (darker region) is the forbidden zone, and the blue (lighter region)
-is the set of points a distance $\pi \curvemaxi/2$ away from $p_{i}$.}
+is the set of points at distance $\pi \curvemaxi/2$ away from $p_{i}$, as used in the proof of Lemma \ref{lem:forbiddenZone}.}
 \label{fig:forbiddenZone}
 \end{figure}
 
@@ -276,7 +276,7 @@ from the tangent, resulting in higher fidelity (c.f. Fig. \ref{fig:proximityVsTa
 
 \caption{A naive proximity-based reconstruction algorithm (shown),
 or even a $\beta$-crust type algorithm, will introduce edges
-between different curves. Knowledge of the forbidden zone allows us to
+between different curves (though $\beta$-crust algorithms will not have crossing edges). Knowledge of the forbidden zone allows us to
 remove such edges.}
 \label{fig:proximityVsTangentBased}
 \end{figure}
@@ -343,6 +343,7 @@ $\epsilon$-sampled. ]
       E' = \{ (\vp_{i}, \vr^{+}_{i}) \} \cup \{ (\vp_{i}, \vr^{-}_{i}) \}
     \end{equation*}
     This graph is the polygonalization of $\curveSet$.
+  \item Remove duplicates, since each edge is output twice at the end of step 3.
   \end{enumerate}
 
 \end{algo}
@@ -450,12 +451,12 @@ We have now shown that $G$ separates distinct curves, and that $G$ contains the 
 
 \begin{lemma}
   \label{lem:localGraphParameterization}
-  A curve $\gamma_{i}(t)$ satisfying \eqref{eq:curvatureAssumption} admits the local parameterization
+  A curve of bounded curvature can be locally parameterized, specifically $\gamma_{i}(t)$ satisfying \eqref{eq:curvatureAssumption} admits the local parameterization
   \begin{equation}
     \label{eq:localGraphParameterization}
     \gamma_{i}(t) = \gamma(t_{0}) + (t-t_{0})\gamma'(t_{0}) + w(t) \gamma'^{\perp}(t_{0})
   \end{equation}
-  where $w'(t_{0})=0$. The parameterization is valid for $\abs{t-t_{0}} < \curvemaxi$. In particular, $w(t) < f^{-1}(\curvemax t) $ where $f(z)=z / \sqrt{1+z^{2}}$.
+  where $w'(t_{0})=0$. The parameterization is valid for $\abs{t-t_{0}} < \curvemaxi$. In particular, $w'(t) < f^{-1}(\curvemax t) $ where $f(z)=z / \sqrt{1+z^{2}}$ and where $f^{-1}(z)$ denotes the functional inverse of $f(z)$. The parameterization described here is not an arc length parameterization.
 \end{lemma}
 
 \begin{proof}

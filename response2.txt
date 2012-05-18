@@ -1,0 +1,29 @@
+Response to Reviewer 4
+
+Minor points
+
+Abstract: Hopefully fixed.
+
+Page 1. Reworded, and clarified that the algorithm does not know the number of curves.
+
+Page 2. The fact that \curvesep < 1 is now stated. Removed the title from the figures 1 and 2. I did not normalize \curvemax, however.
+
+Page 5. Figure 3. The blue region is used in the proof of lemma 2.5, and I now notre this in the caption to figure 3.
+
+Page 6. I did not intend to imply that the crossing edges were a result of a beta-crust algorithm, merely the output of a proximity algorithm. The caption now clarifies this.
+
+Page 7. Added step 4 to the algorithm to remove duplicates.
+
+Page 8. It should indeed have been w'(t), now fixed. Text is somewhat updated.
+
+Page 9. \xi is indeed measured in radians, but it is not being added to units of length in Theorem 3.2. \xi \epsilon (note: epsilon has units of length) is.
+
+Page 10. Haven't tried making the figure yet, maybe I should.
+
+Page 13. No opinion on whether to remove/drastically cut the MRI stuff.
+
+Page 15-16. No idea what he wants us to do.
+
+Page 20. I don't really agree, I find the vector signs easy to ignore and useful in reading. We can change them to bold or something if that works better.
+
+Page 22. Not sure what he is referring to here.

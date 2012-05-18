@@ -31,9 +31,6 @@ ax.set_xticklabels([])
 ax.set_yticklabels([])
 
 
-title("Separation between curves")
-
-
 
 savefig("assumption_two.eps")
 #show()
