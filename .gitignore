@@ -1,0 +1,7 @@
+*.eps
+ctd.aux
+ctd.bbl
+ctd.blg
+ctd.dvi
+ctd.log
+*.pyc
