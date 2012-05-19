@@ -18,7 +18,7 @@ Page 8. It should indeed have been w'(t), now fixed. Text is somewhat updated.
 
 Page 9. \xi is indeed measured in radians, but it is not being added to units of length in Theorem 3.2. \xi \epsilon (note: epsilon has units of length) is.
 
-Page 10. Haven't tried making the figure yet, maybe I should.
+Page 10. Added the figure as suggested, it's now figure 6.
 
 Page 13. No opinion on whether to remove/drastically cut the MRI stuff.
 

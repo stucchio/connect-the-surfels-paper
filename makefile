@@ -14,9 +14,12 @@ ctd.dvi: ctd.tex figures
 	latex ctd.tex
 	latex ctd.tex
 
-figures: forbidden_zone.eps polygonalization_example.eps tangents_good_for.eps assumption_two.eps example1.eps noisy_example.eps more_noisy_example.eps obscured_figure.eps
+figures: forbidden_zone.eps forbidden_zone_noisy.eps polygonalization_example.eps tangents_good_for.eps assumption_two.eps example1.eps noisy_example.eps more_noisy_example.eps obscured_figure.eps
 
 forbidden_zone.eps: forbidden_zone.py
+	python forbidden_zone.py
+
+forbidden_zone_noisy.eps: forbidden_zone.py
 	python forbidden_zone.py
 
 polygonalization_example.eps: polygonalization_example.py misc.py
